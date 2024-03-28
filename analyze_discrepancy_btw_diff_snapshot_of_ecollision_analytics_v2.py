@@ -10,7 +10,6 @@ select_year_list = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
                     2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
                     2020] # 2021 could be used as a negative test case where they are supposed to be different
 case_number_standardization_switch = True
-save_switch = False
 print_switch = True
 example_n = 15
 
@@ -77,8 +76,8 @@ if case_number_standardization_switch:
     df_discrepancy['case_number'] = add_leading_zero(df_discrepancy, 'case_number')
 
 # Filter out rows that are not in the expected years
-df_snapshot_2022 = df_snapshot_2022[(df_snapshot_2022['CASE_YEAR'] >= 2000) & (df_snapshot_2022['CASE_YEAR'] <= 2020)]
-df_snapshot_2024 = df_snapshot_2024[(df_snapshot_2024['CASE_YEAR'] >= 2000) & (df_snapshot_2024['CASE_YEAR'] <= 2020)]
+df_snapshot_2022 = df_snapshot_2022[(df_snapshot_2022['CASE_YEAR'] >= min(select_year_list)) & (df_snapshot_2022['CASE_YEAR'] <= select_year_list.max())]
+df_snapshot_2024 = df_snapshot_2024[(df_snapshot_2024['CASE_YEAR'] >= min(select_year_list)) & (df_snapshot_2024['CASE_YEAR'] <= select_year_list.max())]
 
 # Standardize columns
 df_snapshot_2022['PFN_FILE_NBR'] = df_snapshot_2022['PFN_FILE_NBR'].apply(remove_non_alphanumeric)
