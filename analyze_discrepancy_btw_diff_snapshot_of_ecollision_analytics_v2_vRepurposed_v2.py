@@ -64,28 +64,12 @@ def add_leading_zero(df, column_name):
 # eCollision Analytics extracts from 2 different snapshots
 # Note: even though the earlier snapshot was taken in 2022, since by 2022 the finalized year was 2020,
 # so the following compatative analytics will only be done on 2020 or earlier year
-
-# >>> Input data and label setting #1
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv'
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-03-28'
-
-# >>> Input data and label setting #2
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv' 
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-04-02'
-
-# >>> Input data and label setting #3
-extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-data_label_1 = 'snapshot_2024-03-28'
-data_label_2 = 'snapshot_2024-04-02'
+extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv'
+extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
 
 # Read and concatenate mainframe CSV files
-df_snapshot1 = pd.read_csv(extract_sql_snapshot1, low_memory=False)
-df_snapshot2 = pd.read_csv(extract_sql_snapshot2, low_memory=False)
+df_snapshot1 = pd.read_csv(extract_sql_snapshot1)
+df_snapshot2 = pd.read_csv(extract_sql_snapshot2)
 
 # Filter out rows that are not in the expected years
 df_snapshot1 = df_snapshot1[(df_snapshot1['CASE_YEAR'] >= min(select_year_list)) & (df_snapshot1['CASE_YEAR'] <= max(select_year_list))]
@@ -127,14 +111,14 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
             case_year_count_snapshot1 = df_snapshot1['CASE_YEAR'].value_counts()
             case_year_count_snapshot2 = df_snapshot2['CASE_YEAR'].value_counts()
             # Create DataFrames with the counts
-            df_case_year_count_snapshot1 = pd.DataFrame({'Year': case_year_count_snapshot1.index, data_label_1: case_year_count_snapshot1.values})
-            df_case_year_count_snapshot2 = pd.DataFrame({'Year': case_year_count_snapshot2.index, data_label_2: case_year_count_snapshot2.values})
+            df_case_year_count_snapshot1 = pd.DataFrame({'Year': case_year_count_snapshot1.index, 'Count_2022': case_year_count_snapshot1.values})
+            df_case_year_count_snapshot2 = pd.DataFrame({'Year': case_year_count_snapshot2.index, 'Count_2024': case_year_count_snapshot2.values})
             # Merge the counts based on 'Year'
             df_count_diff = df_case_year_count_snapshot1.set_index('Year').join(df_case_year_count_snapshot2.set_index('Year'), how='outer')
             # Fill NaN values with 0
             df_count_diff = df_count_diff.fillna(0)
             # Calculate the difference in counts
-            df_count_diff['Count_Difference'] = df_count_diff[data_label_2] - df_count_diff[data_label_1]
+            df_count_diff['Count_Difference'] = df_count_diff['Count_2024'] - df_count_diff['Count_2022']
             # Display the result sorted by year
             df_count_diff = df_count_diff.sort_index()
             print(df_count_diff)
