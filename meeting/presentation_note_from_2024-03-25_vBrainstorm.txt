@@ -1,0 +1,27 @@
+Investigative work
+- Compare Mainframe vs Analytics 
+	- 2000-2016
+	- 47K missing in Analytics
+- Compare different snapshots of PRD of Analytics
+	- 2000-2020
+	- great discrepancies in earlier year, no discrepancies in recent years except 2020
+- Compare discrpenacy (Mainframe vs Analytics) and eCollision oracle
+	- 2000-2016 vs post-2016
+	- main discrepancies occurred in 2021 onward
+	- I cross check these discrepancies with CGI change log, no match. If matched, it will suggest highly that CGI is responsible; since there is no match, it doesn't support that within the confine of the evidence; but they could have deleted it, but not tracked here.
+
+Key objectives
+- quantify the discrepancies
+- identify processes that caused the discrepancies
+	- specifically pinpointing isn't possible (without seeing deletion code from CGI and others)
+	- CGI may have contributed to it (the starting of 2021 discrepancies spikes
+- ensure processes that caused the discrepancies no longer active
+- resolve duplication issues - CGI says they don't control or cause this issue; as the law enforcement java developers -> he has a solution to remap the case number; which we can do ourselves
+- CGI claims they don't delete cases; unless they are requested by us; they said 
+	We can't pinpoint who/why they deleted these record with our current backup and data change tracking system
+	- CGI did say they have budget for these improvements
+
+Solution
+- Implement backup/snapshot and data change tracking
+- Do not delete from the backup (flag them as "deleted" with timestamps
+- currently no fields in the data to capture the record information like when it's created in the Analytics

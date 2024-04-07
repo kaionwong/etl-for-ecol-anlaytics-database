@@ -1,0 +1,3120 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="12/22/2014 8:25:56 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="D-730548"
+  DTS:CreatorName="GOA\martin.jongerius"
+  DTS:DTSID="{7CEDA80F-F1C5-4C93-945F-B242A5AD0460}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.150"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="eCIR_GenerateAnnualReports"
+  DTS:PackageType="5"
+  DTS:VersionBuild="139"
+  DTS:VersionGUID="{4E19A00C-AB70-4B2B-8899-C6A18BD5F291}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{05CADFFC-221B-4F1F-A642-78836717FE30}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="FiscalYear">
+      <DTS:VariableValue
+        DTS:DataType="3">2016</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{36E963F1-CE44-4D74-AFE0-DF01D8850404}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="query">
+      <DTS:VariableValue
+        DTS:DataType="8">select * from eCIR.TIMS_LRS_Input_data_Vw order by case_nbr</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{4A29FD24-8E6F-4E28-8D60-021031869020}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="RecordCount">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{962C9362-8AF8-419B-A5BD-5277D8B1ED47}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="ReportYear">
+      <DTS:VariableValue
+        DTS:DataType="3">2015</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Call the first TIMS process that prepares traffic data"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{20F85E2E-F56C-4D39-AF6C-FC1C116CB59F}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Call the first TIMS process that prepares traffic data">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Call the first TIMS process that prepares traffic data\Get eCIR report and fiscal year values"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{7e43f69f-9ddc-43ed-823d-b57ea4c832c6}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get eCIR report and fiscal year values"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="SELECT cast(reportyear as int) as ReportYear,&#xA;cast(reportyear+1 as int) as FiscalYear&#xA;from eCIR.CI_Current_Report_Year&#xA;where yearid=1"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::ReportYear" />
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="1"
+                SQLTask:DtsVariableName="User::FiscalYear" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Call the first TIMS process that prepares traffic data\Get record count"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{9b6a60bb-dcfd-4c0f-8c99-9a7ccad3c2e8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get record count"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="SELECT count(0) as RecordCount from eCIR.TIMS_LRS_Input_data_Vw&#xA;"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::RecordCount" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Call the first TIMS process that prepares traffic data.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{16418D35-7A45-4A68-983C-658B3F4BBA82}"
+          DTS:From="Package\Call the first TIMS process that prepares traffic data\Get eCIR report and fiscal year values"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Call the first TIMS process that prepares traffic data\Get record count" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{27dd1187-c8e2-481a-a9a5-be0068f90437}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Copy parameters from SQL Server CI to Oracle TIMS">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{6aae4b86-98af-409c-b1e5-f256c90995f5}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Data Flow Task"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v10; (C) 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              BLOBTempStoragePath=""
+              bufferTempStoragePath=""
+              version="1">
+              <components>
+                <component
+                  refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
+                  description="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination."
+                  name="ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+                  usesDispositions="true"
+                  version="2">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The Destination database table name."
+                      expressionType="Notify"
+                      name="TableOrViewName"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">"TIMSCOLLINT"."COLLINT_LRS_LONG_LAT_RESULTS"</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows per batch. The default is 0 which uses the same size as SSIS internal buffer. "
+                      expressionType="Notify"
+                      name="BatchSize">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out. A value of 0 indicates infinite time-out. "
+                      expressionType="Notify"
+                      name="CommandTimeout">30</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether to use the SqlBulkCopy interface to improve the performance of bulk insert operations. Only certain providers support this interface."
+                      expressionType="Notify"
+                      name="UseBulkInsertWhenPossible">true</property>
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">Microsoft.ADONETDestination</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Connections[IDbConnection]"
+                      connectionManagerID="{6396A05B-77D4-431B-92A8-2F060FAC7FFF}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[TIMS_DS]"
+                      description="Managed connection manager"
+                      name="IDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input]"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="ADO NET Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].Columns[case_nbr]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="case_nbr"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[CASE_NBR]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_nbr]" />
+                        <inputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].Columns[case_year]"
+                          cachedDataType="wstr"
+                          cachedLength="4"
+                          cachedName="case_year"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[CASE_YEAR]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_year]" />
+                        <inputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].Columns[snapshot_year]"
+                          cachedDataType="wstr"
+                          cachedLength="30"
+                          cachedName="snapshot_year"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[SNAPSHOT_YEAR]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[snapshot_year]" />
+                        <inputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].Columns[longitude]"
+                          cachedDataType="r8"
+                          cachedName="longitude"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[LONGITUDE]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[longitude]" />
+                        <inputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].Columns[latitude]"
+                          cachedDataType="r8"
+                          cachedName="latitude"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[LATITUDE]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[latitude]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[CASE_NBR]"
+                          dataType="wstr"
+                          length="50"
+                          name="CASE_NBR" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[CASE_YEAR]"
+                          dataType="numeric"
+                          name="CASE_YEAR"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[SNAPSHOT_YEAR]"
+                          dataType="numeric"
+                          name="SNAPSHOT_YEAR"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[ROAD_NAME]"
+                          dataType="wstr"
+                          length="200"
+                          name="ROAD_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[CONTROL_SECTION_NUMBER]"
+                          dataType="numeric"
+                          name="CONTROL_SECTION_NUMBER"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[ROADWAY_LABEL_AND_OFFSET]"
+                          dataType="wstr"
+                          length="60"
+                          name="ROADWAY_LABEL_AND_OFFSET" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[POINT_MEASURE]"
+                          dataType="numeric"
+                          name="POINT_MEASURE"
+                          precision="9"
+                          scale="3" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[LONGITUDE]"
+                          dataType="numeric"
+                          name="LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[LATITUDE]"
+                          dataType="numeric"
+                          name="LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[NEW_LONGITUDE]"
+                          dataType="numeric"
+                          name="NEW_LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[NEW_LATITUDE]"
+                          dataType="numeric"
+                          name="NEW_LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input].ExternalColumns[PROCESSED]"
+                          dataType="wstr"
+                          length="1"
+                          name="PROCESSED" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="ADO NET Destination Error Output"
+                      synchronousInputId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="Consumes data from SQL Server, OLE DB, ODBC, or Oracle, using the corresponding .NET Framework data provider. Use a Transact-SQL statement to define the result set. For example, extract data from SQL Server with the .NET Framework data provider for SQL Server.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="Consumes data from SQL Server, OLE DB, ODBC, or Oracle, using the corresponding .NET Framework data provider. Use a Transact-SQL statement to define the result set. For example, extract data from SQL Server with the .NET Framework data provider for SQL Server."
+                  name="ADO NET Source - Analytics TIMS_LRS_Input_data_VW"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the SQL statement used by the component to extract data."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">30</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether to allow non-string external columns to be implicitly converted to strings at the output columns."
+                      name="AllowImplicitStringConversion">true</property>
+                    <property
+                      dataType="System.String"
+                      description="The Source database table name."
+                      expressionType="Notify"
+                      name="TableOrViewName"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">"eCIR"."TIMS_LRS_Input_data_Vw"</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the mode to retrieve external column information"
+                      name="AccessMode"
+                      typeConverter="Microsoft.SqlServer.Dts.Pipeline.DataReaderSourceAdapter+EnumToStringConverter">0</property>
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">Microsoft.DataReaderSourceAdapter</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Connections[IDbConnection]"
+                      connectionManagerID="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MSSQL_CI_DS]"
+                      description="Managed connection manager"
+                      name="IDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output]"
+                      name="ADO NET Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_nbr]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[case_nbr]"
+                          length="50"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_nbr]"
+                          name="case_nbr"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_year]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[case_year]"
+                          length="4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[case_year]"
+                          name="case_year"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[snapshot_year]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[snapshot_year]"
+                          length="30"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[snapshot_year]"
+                          name="snapshot_year"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[longitude]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[longitude]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[longitude]"
+                          name="longitude"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[latitude]"
+                          dataType="r8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[latitude]"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].Columns[latitude]"
+                          name="latitude"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[case_nbr]"
+                          dataType="wstr"
+                          length="50"
+                          name="case_nbr" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[case_year]"
+                          dataType="wstr"
+                          length="4"
+                          name="case_year" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[snapshot_year]"
+                          dataType="wstr"
+                          length="30"
+                          name="snapshot_year" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[longitude]"
+                          dataType="r8"
+                          name="longitude" />
+                        <externalMetadataColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output].ExternalColumns[latitude]"
+                          dataType="r8"
+                          name="latitude" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output]"
+                      isErrorOut="true"
+                      name="ADO NET Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[case_nbr]"
+                          dataType="wstr"
+                          length="50"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[case_nbr]"
+                          name="case_nbr" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[case_year]"
+                          dataType="wstr"
+                          length="4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[case_year]"
+                          name="case_year" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[snapshot_year]"
+                          dataType="wstr"
+                          length="30"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[snapshot_year]"
+                          name="snapshot_year" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[longitude]"
+                          dataType="r8"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[longitude]"
+                          name="longitude" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[latitude]"
+                          dataType="r8"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[latitude]"
+                          name="latitude" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task.Paths[ADO NET Source Output]"
+                  endId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Inputs[ADO NET Destination Input]"
+                  name="ADO NET Source Output"
+                  startId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW.Outputs[ADO NET Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Execute SQL Task - truncate COLLINT_LRS_LONG_LAT_RESULTS"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{951484dc-ca08-4903-8956-40dd883058dd}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Execute SQL Task - truncate COLLINT_LRS_LONG_LAT_RESULTS"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{6396A05B-77D4-431B-92A8-2F060FAC7FFF}"
+              SQLTask:SqlStatementSource="Delete From COLLINT_LRS_LONG_LAT_RESULTS" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 2"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c45b0c5b-7555-44a6-8d76-eeaa580a0b7d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 2"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 2,'Before parameter transfer, # of records: ' + cast(@useRecordCount as varchar))&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useRecordCount"
+                SQLTask:DtsVariableName="User::RecordCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 3"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{b110e1a2-df60-4697-ba3d-76cb4400917c}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 3"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 3,'Before calling TIMS COLLINT_UTIL.load_traffic_info')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{85b55036-8305-4d04-b839-3b8ae67b84ac}"
+          DTS:From="Package\Copy parameters from SQL Server CI to Oracle TIMS\Execute SQL Task - truncate COLLINT_LRS_LONG_LAT_RESULTS"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{F159A424-31E0-4C04-96E4-8BBAD83A1FFD}"
+          DTS:From="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 3" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{4C90281D-5207-43FF-9C1D-332673E11B2C}"
+          DTS:From="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 2"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Copy parameters from SQL Server CI to Oracle TIMS\Execute SQL Task - truncate COLLINT_LRS_LONG_LAT_RESULTS" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Copy results from TIMS to CI"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{2946b1e9-3ec4-4fad-8c2d-6b3e28a5605a}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Copy results from TIMS to CI">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{3a238e75-ab0a-459a-b25a-eac80b74a393}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{601d28bc-e3c9-49c9-baa6-41b6b4c74c06}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Copy the LRS data from TIMS to CI"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v10; (C) 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              BLOBTempStoragePath=""
+              bufferTempStoragePath=""
+              version="1">
+              <components>
+                <component
+                  refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
+                  description="Loads data into an ADO.NET-compliant database that uses a database table or view. Load data into a new or existing table. For example, use an ADO.NET provider for ODBC to load data into an ODBC destination."
+                  name="ADO NET Destination - Analytics CI_Collision_LRS"
+                  usesDispositions="true"
+                  version="2">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="The Destination database table name."
+                      expressionType="Notify"
+                      name="TableOrViewName"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">"TIMS"."CI_Collision_LRS"</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the number of rows per batch. The default is 0 which uses the same size as SSIS internal buffer. "
+                      expressionType="Notify"
+                      name="BatchSize">0</property>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out. A value of 0 indicates infinite time-out. "
+                      expressionType="Notify"
+                      name="CommandTimeout">30</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether to use the SqlBulkCopy interface to improve the performance of bulk insert operations. Only certain providers support this interface."
+                      expressionType="Notify"
+                      name="UseBulkInsertWhenPossible">true</property>
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">Microsoft.ADONETDestination</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Connections[IDbConnection]"
+                      connectionManagerID="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[MSSQL_CI_DS]"
+                      description="Managed connection manager"
+                      name="IDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input]"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="ADO NET Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[CASE_NBR]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="CASE_NBR"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[CaseNumber]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_NBR]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[CASE_YEAR]"
+                          cachedDataType="numeric"
+                          cachedName="CASE_YEAR"
+                          cachedPrecision="4"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[CaseYear]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_YEAR]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[ROAD_NAME]"
+                          cachedDataType="wstr"
+                          cachedLength="200"
+                          cachedName="ROAD_NAME"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[RoadName]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROAD_NAME]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[CONTROL_SECTION_NUMBER]"
+                          cachedDataType="numeric"
+                          cachedName="CONTROL_SECTION_NUMBER"
+                          cachedPrecision="4"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[ControlSection]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CONTROL_SECTION_NUMBER]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[POINT_MEASURE]"
+                          cachedDataType="numeric"
+                          cachedName="POINT_MEASURE"
+                          cachedPrecision="9"
+                          cachedScale="3"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[KMPost]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[POINT_MEASURE]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[ROADWAY_LABEL_AND_OFFSET]"
+                          cachedDataType="wstr"
+                          cachedLength="60"
+                          cachedName="ROADWAY_LABEL_AND_OFFSET"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[RoadwayLabelOffset]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROADWAY_LABEL_AND_OFFSET]" />
+                        <inputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].Columns[SNAPSHOT_YEAR]"
+                          cachedDataType="numeric"
+                          cachedName="SNAPSHOT_YEAR"
+                          cachedPrecision="4"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[FiscalYear]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[SNAPSHOT_YEAR]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[Id]"
+                          dataType="numeric"
+                          name="Id"
+                          precision="10" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[CaseNumber]"
+                          dataType="wstr"
+                          length="50"
+                          name="CaseNumber" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[CaseYear]"
+                          dataType="numeric"
+                          name="CaseYear"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[FiscalYear]"
+                          dataType="numeric"
+                          name="FiscalYear"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[RoadName]"
+                          dataType="wstr"
+                          length="200"
+                          name="RoadName" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[ControlSection]"
+                          dataType="numeric"
+                          name="ControlSection"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[KMPost]"
+                          dataType="numeric"
+                          name="KMPost"
+                          precision="12"
+                          scale="3" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input].ExternalColumns[RoadwayLabelOffset]"
+                          dataType="wstr"
+                          length="60"
+                          name="RoadwayLabelOffset" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Outputs[ADO NET Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="ADO NET Destination Error Output"
+                      synchronousInputId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Outputs[ADO NET Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Outputs[ADO NET Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="Consumes data from SQL Server, OLE DB, ODBC, or Oracle, using the corresponding .NET Framework data provider. Use a Transact-SQL statement to define the result set. For example, extract data from SQL Server with the .NET Framework data provider for SQL Server.;Microsoft Corporation; Microsoft SQL Server; © Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="Consumes data from SQL Server, OLE DB, ODBC, or Oracle, using the corresponding .NET Framework data provider. Use a Transact-SQL statement to define the result set. For example, extract data from SQL Server with the .NET Framework data provider for SQL Server."
+                  name="ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the SQL statement used by the component to extract data."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">30</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether to allow non-string external columns to be implicitly converted to strings at the output columns."
+                      name="AllowImplicitStringConversion">true</property>
+                    <property
+                      dataType="System.String"
+                      description="The Source database table name."
+                      expressionType="Notify"
+                      name="TableOrViewName"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">"TIMSCOLLINT"."COLLINT_LRS_LONG_LAT_RESULTS"</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the mode to retrieve external column information"
+                      name="AccessMode"
+                      typeConverter="Microsoft.SqlServer.Dts.Pipeline.DataReaderSourceAdapter+EnumToStringConverter">0</property>
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">Microsoft.DataReaderSourceAdapter</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Connections[IDbConnection]"
+                      connectionManagerID="{6396A05B-77D4-431B-92A8-2F060FAC7FFF}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[TIMS_DS]"
+                      description="Managed connection manager"
+                      name="IDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output]"
+                      name="ADO NET Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_NBR]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CASE_NBR]"
+                          length="50"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_NBR]"
+                          name="CASE_NBR"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_YEAR]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CASE_YEAR]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CASE_YEAR]"
+                          name="CASE_YEAR"
+                          precision="4"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[SNAPSHOT_YEAR]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[SNAPSHOT_YEAR]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[SNAPSHOT_YEAR]"
+                          name="SNAPSHOT_YEAR"
+                          precision="4"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROAD_NAME]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[ROAD_NAME]"
+                          length="200"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROAD_NAME]"
+                          name="ROAD_NAME"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CONTROL_SECTION_NUMBER]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CONTROL_SECTION_NUMBER]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[CONTROL_SECTION_NUMBER]"
+                          name="CONTROL_SECTION_NUMBER"
+                          precision="4"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROADWAY_LABEL_AND_OFFSET]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[ROADWAY_LABEL_AND_OFFSET]"
+                          length="60"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[ROADWAY_LABEL_AND_OFFSET]"
+                          name="ROADWAY_LABEL_AND_OFFSET"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[POINT_MEASURE]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[POINT_MEASURE]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[POINT_MEASURE]"
+                          name="POINT_MEASURE"
+                          precision="9"
+                          scale="3"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[LONGITUDE]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[LONGITUDE]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[LONGITUDE]"
+                          name="LONGITUDE"
+                          precision="20"
+                          scale="11"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[LATITUDE]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[LATITUDE]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[LATITUDE]"
+                          name="LATITUDE"
+                          precision="20"
+                          scale="11"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[NEW_LONGITUDE]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[NEW_LONGITUDE]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[NEW_LONGITUDE]"
+                          name="NEW_LONGITUDE"
+                          precision="20"
+                          scale="11"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[NEW_LATITUDE]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[NEW_LATITUDE]"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[NEW_LATITUDE]"
+                          name="NEW_LATITUDE"
+                          precision="20"
+                          scale="11"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[PROCESSED]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[PROCESSED]"
+                          length="1"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].Columns[PROCESSED]"
+                          name="PROCESSED"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CASE_NBR]"
+                          dataType="wstr"
+                          length="50"
+                          name="CASE_NBR" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CASE_YEAR]"
+                          dataType="numeric"
+                          name="CASE_YEAR"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[SNAPSHOT_YEAR]"
+                          dataType="numeric"
+                          name="SNAPSHOT_YEAR"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[ROAD_NAME]"
+                          dataType="wstr"
+                          length="200"
+                          name="ROAD_NAME" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[CONTROL_SECTION_NUMBER]"
+                          dataType="numeric"
+                          name="CONTROL_SECTION_NUMBER"
+                          precision="4" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[ROADWAY_LABEL_AND_OFFSET]"
+                          dataType="wstr"
+                          length="60"
+                          name="ROADWAY_LABEL_AND_OFFSET" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[POINT_MEASURE]"
+                          dataType="numeric"
+                          name="POINT_MEASURE"
+                          precision="9"
+                          scale="3" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[LONGITUDE]"
+                          dataType="numeric"
+                          name="LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[LATITUDE]"
+                          dataType="numeric"
+                          name="LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[NEW_LONGITUDE]"
+                          dataType="numeric"
+                          name="NEW_LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[NEW_LATITUDE]"
+                          dataType="numeric"
+                          name="NEW_LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <externalMetadataColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output].ExternalColumns[PROCESSED]"
+                          dataType="wstr"
+                          length="1"
+                          name="PROCESSED" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output]"
+                      isErrorOut="true"
+                      name="ADO NET Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CASE_NBR]"
+                          dataType="wstr"
+                          length="50"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CASE_NBR]"
+                          name="CASE_NBR" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CASE_YEAR]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CASE_YEAR]"
+                          name="CASE_YEAR"
+                          precision="4" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[SNAPSHOT_YEAR]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[SNAPSHOT_YEAR]"
+                          name="SNAPSHOT_YEAR"
+                          precision="4" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ROAD_NAME]"
+                          dataType="wstr"
+                          length="200"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ROAD_NAME]"
+                          name="ROAD_NAME" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CONTROL_SECTION_NUMBER]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[CONTROL_SECTION_NUMBER]"
+                          name="CONTROL_SECTION_NUMBER"
+                          precision="4" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ROADWAY_LABEL_AND_OFFSET]"
+                          dataType="wstr"
+                          length="60"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ROADWAY_LABEL_AND_OFFSET]"
+                          name="ROADWAY_LABEL_AND_OFFSET" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[POINT_MEASURE]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[POINT_MEASURE]"
+                          name="POINT_MEASURE"
+                          precision="9"
+                          scale="3" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[LONGITUDE]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[LONGITUDE]"
+                          name="LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[LATITUDE]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[LATITUDE]"
+                          name="LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[NEW_LONGITUDE]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[NEW_LONGITUDE]"
+                          name="NEW_LONGITUDE"
+                          precision="20"
+                          scale="11" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[NEW_LATITUDE]"
+                          dataType="numeric"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[NEW_LATITUDE]"
+                          name="NEW_LATITUDE"
+                          precision="20"
+                          scale="11" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[PROCESSED]"
+                          dataType="wstr"
+                          length="1"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[PROCESSED]"
+                          name="PROCESSED" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI.Paths[ADO NET Source Output]"
+                  endId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS.Inputs[ADO NET Destination Input]"
+                  name="ADO NET Source Output"
+                  startId="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS.Outputs[ADO NET Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Delete any records already in table for the case year"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{0FE08372-4439-48DB-9F65-CF0CD075B00D}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Delete any records already in table for the case year"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="delete from TIMS.CI_Collision_LRS where&#xA;fiscalyear = @useFiscalYear" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useFiscalYear"
+                SQLTask:DtsVariableName="User::FiscalYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Delete calculated plotted road data"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{4A59C822-F348-4A9D-96BC-53DBB5D17EE9}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Delete calculated plotted road data"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="delete from ecir.CI_PlottedRoads&#xA;where TrafficYear = @useReportYear" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Load calculated plotted road data"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{51B58FD7-8DD7-43BE-AB2A-15ABE68A0D8C}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load calculated plotted road data"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into ecir.CI_PlottedRoads&#xA;select * from &#xA;eCIR.fnGetPlottedRoads2a(@useReportYear)" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Make report entries"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{5680E15B-F744-4148-970F-0BAD25C5A6F8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Make report entries"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Reports (ReportYear, ReportType, CreateDate) values(@useRepYear, '1_analysis', getdate())&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useRepYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Make report entries 1"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{8fcfaeb2-2cfa-46a9-ba8d-6c12a2eaeaa0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Make report entries 1"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Reports (ReportYear, ReportType, CreateDate) values(@useRepYear, 'geometric', getdate())&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useRepYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Override intersection and interchange records with plotting info"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{88B17ED1-5A80-4B6E-9623-3924C7762DCA}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Override intersection and interchange records with plotting info"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update tims.CI_Collision_LRS&#xA;set RoadName = (select ipv.LOC_HWY_NBR from tims.CI_Interchange_Plotting_Vw ipv where ipv.case_year = TIMS.CI_Collision_LRS.CaseYear and ipv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;ControlSection = (select ipv.control_section from tims.CI_Interchange_Plotting_Vw ipv where ipv.case_year = TIMS.CI_Collision_LRS.CaseYear and ipv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;KMPost = (select ipv.KM_POST from tims.CI_Interchange_Plotting_Vw ipv where ipv.case_year = TIMS.CI_Collision_LRS.CaseYear and ipv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;RoadwayLabelOffset = null&#xA;where (Roadname is null&#xA;            OR (cast(CaseYear as char) + CaseNumber) IN &#xA;              (SELECT DISTINCT cast(ipv.case_year as char) + ipv.CASE_NBR &#xA;                  FROM tims.CI_Interchange_Plotting_Vw ipv, &#xA;                              eCIR.TIMS_LRS_Input_data_Vw lrs &#xA;                WHERE lrs.case_nbr = ipv.CASE_NBR &#xA;                        and lrs.case_year = ipv.case_year))&#xA;and FiscalYear = @FiscalYear" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@FiscalYear"
+                SQLTask:DtsVariableName="User::FiscalYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Override roadnames with len greater than 4 and Sh Pk Freeway"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{7E3EA11B-B551-44A7-A5B2-58D78B57A190}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Override roadnames with len greater than 4 and Sh Pk Freeway"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update tims.CI_Collision_LRS&#xA;set RoadName = (select cpv.highway from tims.CI_Collision_Plotting_Vw cpv where cpv.case_year = TIMS.CI_Collision_LRS.CaseYear and cpv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;ControlSection = (select cpv.control_section from tims.CI_Collision_Plotting_Vw cpv where cpv.case_year = TIMS.CI_Collision_LRS.CaseYear and cpv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;KMPost = (select cpv.KM_POST from tims.CI_Collision_Plotting_Vw cpv where cpv.case_year = TIMS.CI_Collision_LRS.CaseYear and cpv.CASE_NBR = TIMS.CI_Collision_LRS.CaseNumber),&#xA;RoadwayLabelOffset = null&#xA;where len(roadname) &gt; 4 and RoadName &lt;&gt; 'SHERWOOD PARK FREEWAY'&#xA;and FiscalYear = @FiscalYear" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@FiscalYear"
+                SQLTask:DtsVariableName="User::FiscalYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Remove any previous report entries when present"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{6facb308-e029-4dc4-b654-1262493c94c0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Remove any previous report entries when present"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="delete from eCIR.CI_Annual_Reports&#xA;where ReportYear= @useRepYear&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useRepYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Update process progress - Step 4"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{26b6408c-3dfb-4d6f-be6b-70280d0cf14e}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 4"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 4,'Cleanup any exisitng records')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Update process progress - Step 5"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{120d335d-8a82-4f74-874a-7873e00b9434}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 5"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 5,'Before moving results from TIMS to eCIR')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Update process progress - Step 6"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ae2cb853-5078-4db7-af55-f34abc83f804}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 6"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 6,'Transfer from TIMS to eCIR complete')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Update process progress - Step 7"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{1963CFE8-F543-4925-BA77-6F189C3454AB}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 7"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 7,'Calculated plotted roads data')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Copy results from TIMS to CI\Update process progress - Step 99 Closing"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{6131ed2c-b956-4db1-8d23-d942fa8cff22}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 Closing"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'Failed to set inprogress flag to zero')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{D6F38D31-BE79-4199-8DE0-BC2CD532C419}"
+          DTS:From="Package\Copy results from TIMS to CI\Update process progress - Step 4"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Copy results from TIMS to CI\Delete any records already in table for the case year" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{B19B8F72-F0BA-46C3-A91E-0A14A738DDD3}"
+          DTS:From="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Copy results from TIMS to CI\Override roadnames with len greater than 4 and Sh Pk Freeway" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 10]"
+          DTS:CreationName=""
+          DTS:DTSID="{62E9CA92-C1BF-4D38-A27B-BA752B506035}"
+          DTS:From="Package\Copy results from TIMS to CI\Load calculated plotted road data"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 10"
+          DTS:To="Package\Copy results from TIMS to CI\Update process progress - Step 7" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 11]"
+          DTS:CreationName=""
+          DTS:DTSID="{8C43FAE3-BA25-457A-B09D-DF824786C135}"
+          DTS:From="Package\Copy results from TIMS to CI\Update process progress - Step 7"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 11"
+          DTS:To="Package\Copy results from TIMS to CI\Remove any previous report entries when present" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 12]"
+          DTS:CreationName=""
+          DTS:DTSID="{9ECFA523-8AB0-476F-8AF5-5F9CA3659EA8}"
+          DTS:From="Package\Copy results from TIMS to CI\Update process progress - Step 6"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 12"
+          DTS:To="Package\Copy results from TIMS to CI\Delete calculated plotted road data" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 13]"
+          DTS:CreationName=""
+          DTS:DTSID="{7BEE6A3F-B830-4A23-8B41-E1CE1A2427F7}"
+          DTS:From="Package\Copy results from TIMS to CI\Override roadnames with len greater than 4 and Sh Pk Freeway"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 13"
+          DTS:To="Package\Copy results from TIMS to CI\Override intersection and interchange records with plotting info" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{652D82B4-988C-45EA-8CA1-D3B8433DA0FA}"
+          DTS:From="Package\Copy results from TIMS to CI\Delete any records already in table for the case year"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Copy results from TIMS to CI\Update process progress - Step 5" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{64681B4E-1984-406C-8483-0B4772E0A41C}"
+          DTS:From="Package\Copy results from TIMS to CI\Update process progress - Step 5"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{96D9E5D0-D989-4127-B757-D718B164584A}"
+          DTS:From="Package\Copy results from TIMS to CI\Delete calculated plotted road data"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\Copy results from TIMS to CI\Load calculated plotted road data" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 5]"
+          DTS:CreationName=""
+          DTS:DTSID="{369B0682-8686-4411-AAA2-0C792E2EA050}"
+          DTS:From="Package\Copy results from TIMS to CI\Remove any previous report entries when present"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 5"
+          DTS:To="Package\Copy results from TIMS to CI\Make report entries 1" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 6]"
+          DTS:CreationName=""
+          DTS:DTSID="{CB95E589-7DEC-446B-808F-EEA7DDE7E225}"
+          DTS:From="Package\Copy results from TIMS to CI\Make report entries 1"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 6"
+          DTS:To="Package\Copy results from TIMS to CI\Make report entries" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 7]"
+          DTS:CreationName=""
+          DTS:DTSID="{9E03BC96-1DB7-4416-A314-FCDBD00899FA}"
+          DTS:From="Package\Copy results from TIMS to CI\Make report entries"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 7"
+          DTS:To="Package\Copy results from TIMS to CI\Conclude the report generation process" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 8]"
+          DTS:CreationName=""
+          DTS:DTSID="{2FDF3810-A758-47DC-BB3F-DC1720345358}"
+          DTS:From="Package\Copy results from TIMS to CI\Conclude the report generation process"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 8"
+          DTS:To="Package\Copy results from TIMS to CI\Update process progress - Step 99 Closing"
+          DTS:Value="1" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 9]"
+          DTS:CreationName=""
+          DTS:DTSID="{57B92346-E303-40DD-875A-5049F908E0AE}"
+          DTS:From="Package\Copy results from TIMS to CI\Override intersection and interchange records with plotting info"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 9"
+          DTS:To="Package\Copy results from TIMS to CI\Update process progress - Step 6" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Error handling"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{0DF6D159-DF1F-4566-88F2-AFB22A1E4431}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Error handling">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Error handling\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{48c9e33c-6ee8-47d2-8238-4d85f21babdc}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Error handling\Update process progress - Step 99 After parameter move"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ec424a6d-f717-4465-b2f6-f528dd09f95d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 After parameter move"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'Failed to move parameter to TIMS, process ended')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Error handling.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{6E74F202-6226-4E90-A323-BE16F3FDEEBC}"
+          DTS:From="Package\Error handling\Update process progress - Step 99 After parameter move"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Error handling\Conclude the report generation process" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Run stored procedure on TIMS side"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{f9cce5aa-605f-4952-b046-cea8fddfcd79}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Run stored procedure on TIMS side">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Run stored procedure on TIMS side\Execute SQL Task - process_long_lat"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{bbece28f-a84d-4d34-9ac9-4b643b252071}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Execute SQL Task - process_long_lat"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{6396A05B-77D4-431B-92A8-2F060FAC7FFF}"
+              SQLTask:SqlStatementSource="begin&#xA;collint_util.process_long_lat;&#xA;end;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{675E0C41-7FA3-4CB8-974E-78B0756D8814}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{09ed7294-4bc0-40cc-9d53-b6b8d76bd74f}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Update process progress - Step 99 after TIMS proc"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{385ef538-d43b-4633-ba18-166a42a04efc}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 after TIMS proc"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'TIMS procedure failed, process ended')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{E972FF17-B7B0-4EED-BC8D-98EC4A406D6B}"
+          DTS:From="Package\Sequence Container\Update process progress - Step 99 after TIMS proc"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container\Conclude the report generation process" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container 1"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{B8D92872-777D-4833-8145-F820AE49EFF5}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container 1">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 1\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{427d1634-1c8b-4f6c-9e5d-2d88cacb84e6}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 1\Update process progress - Step 99 After results move"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{28527291-8878-41ea-bec9-819acf159cf8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 After results move"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'Failed to move results to eCIR, process ended')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container 1.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{5C19CE46-B6F7-4419-BE98-42539C043E09}"
+          DTS:From="Package\Sequence Container 1\Update process progress - Step 99 After results move"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container 1\Conclude the report generation process" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container 2"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{D8DCEEA4-D013-4E0C-BEEB-75F5235A1CEF}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container 2">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 2\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{37db4063-11c3-4e28-912f-9aa1e0e795af}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="3">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 2\Update process progress - Step 99 unexpected"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{8cce3551-b58e-49d9-9839-53ad4874a3bc}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 unexpected"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="3">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'Unexpected failure, please try again')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container 2.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{CCABB9CF-20B8-462B-B076-C0A49684D24B}"
+          DTS:From="Package\Sequence Container 2\Update process progress - Step 99 unexpected"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container 2\Conclude the report generation process" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container 3"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{EFD596D2-6F87-4E5C-8922-E7A6DABE570D}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container 3">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 3\Conclude the report generation process"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{7b6fa153-a08a-46d2-88bb-36b69b033a62}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Conclude the report generation process"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="2">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="update eCIR.CI_Current_Report_Year set InProgressFlag=0, ProcessStep=99 where YearId=1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 3\Update process progress - Step 99"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{bfb2eed5-7e60-4f10-b8a6-c36b4015218d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="2">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'No records found for processing - process ended')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container 3\Update process progress - Step 99 Closing"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a2d9431b-1920-4397-aa37-4e06249b2516}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update process progress - Step 99 Closing"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="2">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{67DF6BBB-0440-40D8-A8AB-57E8A7F0CBF4}"
+              SQLTask:SqlStatementSource="insert into eCIR.CI_Annual_Report_Process_Progress&#xA;(Id, ReportYear, StepNumber, StepDescription)&#xA;values(NEWID(), @useReportYear, 99,'Failed to set inprogress flag to zero')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@useReportYear"
+                SQLTask:DtsVariableName="User::ReportYear"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="11"
+                SQLTask:ParameterSize="4" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container 3.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{EAC9D8D3-C049-486E-A0F2-83BE200E3CB0}"
+          DTS:From="Package\Sequence Container 3\Update process progress - Step 99"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container 3\Conclude the report generation process" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container 3.PrecedenceConstraints[Constraint 15]"
+          DTS:CreationName=""
+          DTS:DTSID="{8D9BE99C-1621-40B7-9230-4C70C8EBDE49}"
+          DTS:From="Package\Sequence Container 3\Conclude the report generation process"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 15"
+          DTS:To="Package\Sequence Container 3\Update process progress - Step 99 Closing"
+          DTS:Value="1" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{DD6C9C40-525B-4F72-90C8-D42A13C13F2B}"
+      DTS:From="Package\Copy parameters from SQL Server CI to Oracle TIMS"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Run stored procedure on TIMS side" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{3bd3e5d0-b280-475c-97b8-fe67bf1c1e09}"
+      DTS:From="Package\Run stored procedure on TIMS side"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Copy results from TIMS to CI" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{C1B0B6EB-6245-4DA6-A746-25EC4C30A9E7}"
+      DTS:EvalOp="1"
+      DTS:Expression="@[User::RecordCount] != 0"
+      DTS:From="Package\Call the first TIMS process that prepares traffic data"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Copy parameters from SQL Server CI to Oracle TIMS" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{4A2ACAF4-60C7-4CEE-842F-E14BB99658FF}"
+      DTS:From="Package\Run stored procedure on TIMS side"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\Sequence Container"
+      DTS:Value="1" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{239E1CB8-953B-4EE6-A5C8-C336F7B643B0}"
+      DTS:From="Package\Copy results from TIMS to CI"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\Sequence Container 1"
+      DTS:Value="1" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{1E665E19-3B7D-4AF6-875D-FA339B98838D}"
+      DTS:From="Package\Call the first TIMS process that prepares traffic data"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\Sequence Container 2"
+      DTS:Value="1" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
+      DTS:CreationName=""
+      DTS:DTSID="{D716C818-F16B-4251-A56E-35FC0D1E52DF}"
+      DTS:From="Package\Copy parameters from SQL Server CI to Oracle TIMS"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 8"
+      DTS:To="Package\Error handling"
+      DTS:Value="1" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
+      DTS:CreationName=""
+      DTS:DTSID="{57D2104D-4006-4803-A25C-61655032F705}"
+      DTS:EvalOp="1"
+      DTS:Expression="@[User::RecordCount] == 0"
+      DTS:From="Package\Call the first TIMS process that prepares traffic data"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 9"
+      DTS:To="Package\Sequence Container 3"
+      DTS:Value="2" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="128" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="267,42"
+          Id="Package\Call the first TIMS process that prepares traffic data\Get eCIR report and fiscal year values"
+          TopLeft="33.433962264151,18.6981132075472" />
+        <NodeLayout
+          Size="170,42"
+          Id="Package\Call the first TIMS process that prepares traffic data\Get record count"
+          TopLeft="86.4716981132074,105.641509433962" />
+        <EdgeLayout
+          Id="Package\Call the first TIMS process that prepares traffic data.PrecedenceConstraints[Constraint]"
+          TopLeft="169.202830188679,60.6981132075472">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,44.943396226415"
+              Start="0,0"
+              End="0,37.443396226415">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.443396226415" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="327,185"
+          Size="327,229"
+          Id="Package\Call the first TIMS process that prepares traffic data"
+          TopLeft="641.61320754717,107.311320754717" />
+        <NodeLayout
+          Size="162,53"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task"
+          TopLeft="89.0754716981132,197.867924528302" />
+        <NodeLayout
+          Size="254,53"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Execute SQL Task - truncate COLLINT_LRS_LONG_LAT_RESULTS"
+          TopLeft="45.6226415094341,99.8490566037735" />
+        <NodeLayout
+          Size="236,42"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 2"
+          TopLeft="49.5471698113208,13.4905660377359" />
+        <NodeLayout
+          Size="236,42"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Update process progress - Step 3"
+          TopLeft="57.3396226415096,290.037735849057" />
+        <EdgeLayout
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint]"
+          TopLeft="171.349056603774,152.849056603774">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.0188679245284"
+              Start="0,0"
+              End="0,37.5188679245284">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.5188679245284" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint 1]"
+          TopLeft="172.707547169811,250.867924528302">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,39.1698113207551"
+              Start="0,0"
+              End="0,31.6698113207551">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.6698113207551" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS.PrecedenceConstraints[Constraint 2]"
+          TopLeft="170.084905660377,55.4905660377359">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,44.3584905660376"
+              Start="0,0"
+              End="0,36.8584905660376">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,36.8584905660376" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="343,386"
+          Size="343,430"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS"
+          TopLeft="681.801886792453,483.5" />
+        <NodeLayout
+          Size="281,44"
+          Id="Package\Copy results from TIMS to CI\Conclude the report generation process"
+          TopLeft="359.207547169812,536.33962264151" />
+        <NodeLayout
+          Size="265,44"
+          Id="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI"
+          TopLeft="26.1698113207549,94.433962264151" />
+        <NodeLayout
+          Size="328,44"
+          Id="Package\Copy results from TIMS to CI\Delete any records already in table for the case year"
+          TopLeft="341.754716981132,13.4150943396226" />
+        <NodeLayout
+          Size="262,42"
+          Id="Package\Copy results from TIMS to CI\Delete calculated plotted road data"
+          TopLeft="29.8301886792456,278.811320754717" />
+        <NodeLayout
+          Size="249,42"
+          Id="Package\Copy results from TIMS to CI\Load calculated plotted road data"
+          TopLeft="30.981132075472,366.301886792453" />
+        <NodeLayout
+          Size="193,42"
+          Id="Package\Copy results from TIMS to CI\Make report entries"
+          TopLeft="55.7547169811323,531.735849056604" />
+        <NodeLayout
+          Size="186,42"
+          Id="Package\Copy results from TIMS to CI\Make report entries 1"
+          TopLeft="61.0943396226417,447.207547169811" />
+        <NodeLayout
+          Size="321,42"
+          Id="Package\Copy results from TIMS to CI\Override intersection and interchange records with plotting info"
+          TopLeft="353.452830188679,186.188679245283" />
+        <NodeLayout
+          Size="268,47"
+          Id="Package\Copy results from TIMS to CI\Override roadnames with len greater than 4 and Sh Pk Freeway"
+          TopLeft="25.9433962264152,183.471698113208" />
+        <NodeLayout
+          Size="323,42"
+          Id="Package\Copy results from TIMS to CI\Remove any previous report entries when present"
+          TopLeft="344.075471698113,445.528301886792" />
+        <NodeLayout
+          Size="236,44"
+          Id="Package\Copy results from TIMS to CI\Update process progress - Step 4"
+          TopLeft="30.2264150943397,12.6037735849056" />
+        <NodeLayout
+          Size="245,42"
+          Id="Package\Copy results from TIMS to CI\Update process progress - Step 5"
+          TopLeft="384.22641509434,94.8113207547169" />
+        <NodeLayout
+          Size="242,42"
+          Id="Package\Copy results from TIMS to CI\Update process progress - Step 6"
+          TopLeft="388.88679245283,281.283018867925" />
+        <NodeLayout
+          Size="237,42"
+          Id="Package\Copy results from TIMS to CI\Update process progress - Step 7"
+          TopLeft="387.905660377359,366.867924528302" />
+        <NodeLayout
+          Size="287,42"
+          Id="Package\Copy results from TIMS to CI\Update process progress - Step 99 Closing"
+          TopLeft="354.679245283019,633.11320754717" />
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint]"
+          TopLeft="266.22641509434,35.0094339622641">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="75.5283018867926,0"
+              Start="0,0"
+              End="68.0283018867926,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="68.0283018867926,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 1]"
+          TopLeft="159.306603773585,138.433962264151">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.0377358490566"
+              Start="0,0"
+              End="0,37.5377358490566">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.5377358490566" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 10]"
+          TopLeft="279.981132075472,384.751572327044">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="107.924528301887,0"
+              Start="0,0"
+              End="100.424528301887,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="100.424528301887,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 11]"
+          TopLeft="505.990566037736,408.867924528302">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36.6603773584905"
+              Start="0,0"
+              End="0,29.1603773584905">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,29.1603773584905" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 12]"
+          TopLeft="388.88679245283,301.047169811321">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-97.0566037735848,0"
+              Start="0,0"
+              End="-89.5566037735848,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-89.5566037735848,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 13]"
+          TopLeft="293.943396226415,207.080188679245">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="59.5094339622642,0"
+              Start="0,0"
+              End="52.0094339622642,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="52.0094339622642,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 2]"
+          TopLeft="506.240566037736,57.4150943396226">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,37.3962264150944"
+              Start="0,0"
+              End="0,29.8962264150944">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,29.8962264150944" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 3]"
+          TopLeft="384.22641509434,116.122641509434">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-93.0566037735848,0"
+              Start="0,0"
+              End="-85.5566037735848,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-85.5566037735848,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 4]"
+          TopLeft="158.155660377359,320.811320754717">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.4905660377358"
+              Start="0,0"
+              End="0,37.9905660377358">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.9905660377358" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 5]"
+          TopLeft="344.075471698113,467.367924528302">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-96.9811320754716,0"
+              Start="0,0"
+              End="-89.4811320754716,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-89.4811320754716,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 6]"
+          TopLeft="153.174528301887,489.207547169811">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,42.5283018867926"
+              Start="0,0"
+              End="0,35.0283018867926">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,35.0283018867926" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 7]"
+          TopLeft="248.754716981132,555.537735849057">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="110.452830188679,0"
+              Start="0,0"
+              End="102.952830188679,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="102.952830188679,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 8]"
+          TopLeft="498.943396226415,580.33962264151">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,52.7735849056601"
+              Start="0,0"
+              End="0,45.2735849056601">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45.2735849056601" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.24134765625,17.7622807340801,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI.PrecedenceConstraints[Constraint 9]"
+          TopLeft="511.919811320755,228.188679245283">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,53.0943396226414"
+              Start="0,0"
+              End="0,45.5943396226414">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,45.5943396226414" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="709,703"
+          Size="709,747"
+          Id="Package\Copy results from TIMS to CI"
+          TopLeft="509.5,1291.38679245283" />
+        <NodeLayout
+          Size="274,44"
+          Id="Package\Error handling\Conclude the report generation process"
+          TopLeft="51.7924528301887,123.528301886792" />
+        <NodeLayout
+          Size="349,42"
+          Id="Package\Error handling\Update process progress - Step 99 After parameter move"
+          TopLeft="17.2264150943397,16.6981132075472" />
+        <EdgeLayout
+          Id="Package\Error handling.PrecedenceConstraints[Constraint]"
+          TopLeft="190.259433962264,58.6981132075472">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,64.8301886792452"
+              Start="0,0"
+              End="0,57.3301886792452">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,57.3301886792452" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.283018867924525"
+          IsExpanded="True"
+          PanelSize="372,210"
+          Size="372,253"
+          Id="Package\Error handling"
+          TopLeft="1153.19811320755,567.367924528302" />
+        <NodeLayout
+          Size="279,44"
+          Id="Package\Run stored procedure on TIMS side\Execute SQL Task - process_long_lat"
+          TopLeft="47.867924528302,22.1132075471699" />
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="375,123"
+          Size="375,167"
+          Id="Package\Run stored procedure on TIMS side"
+          TopLeft="669.896226415095,1010.53773584906" />
+        <NodeLayout
+          Size="265,42"
+          Id="Package\Sequence Container\Conclude the report generation process"
+          TopLeft="61.1509433962265,100.77358490566" />
+        <NodeLayout
+          Size="321,44"
+          Id="Package\Sequence Container\Update process progress - Step 99 after TIMS proc"
+          TopLeft="39.7924528301887,16.1132075471699" />
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          TopLeft="196.971698113208,60.1132075471699">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,40.6603773584905"
+              Start="0,0"
+              End="0,33.1603773584905">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,33.1603773584905" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.283018867924525"
+          IsExpanded="True"
+          PanelSize="396,198"
+          Size="396,241"
+          Id="Package\Sequence Container"
+          TopLeft="1149.14150943396,976.009433962264" />
+        <NodeLayout
+          Size="264,42"
+          Id="Package\Sequence Container 1\Conclude the report generation process"
+          TopLeft="62.8301886792451,108.075471698113" />
+        <NodeLayout
+          Size="340,42"
+          Id="Package\Sequence Container 1\Update process progress - Step 99 After results move"
+          TopLeft="18.5471698113206,14.2075471698113" />
+        <EdgeLayout
+          Id="Package\Sequence Container 1.PrecedenceConstraints[Constraint]"
+          TopLeft="191.688679245283,56.2075471698113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51.867924528302"
+              Start="0,0"
+              End="0,44.367924528302">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,44.367924528302" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.283018867924525"
+          IsExpanded="True"
+          PanelSize="373,207"
+          Size="373,250"
+          Id="Package\Sequence Container 1"
+          TopLeft="1311.30188679245,1543.16037735849" />
+        <NodeLayout
+          Size="282,42"
+          Id="Package\Sequence Container 2\Conclude the report generation process"
+          TopLeft="37.5471698113211,98.8867924528302" />
+        <NodeLayout
+          Size="299,42"
+          Id="Package\Sequence Container 2\Update process progress - Step 99 unexpected"
+          TopLeft="26.2452830188681,18.3018867924528" />
+        <EdgeLayout
+          Id="Package\Sequence Container 2.PrecedenceConstraints[Constraint]"
+          TopLeft="177.146226415095,60.3018867924528">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,38.5849056603774"
+              Start="0,0"
+              End="0,31.0849056603774">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.0849056603774" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.283018867924525"
+          IsExpanded="True"
+          PanelSize="359,196"
+          Size="359,239"
+          Id="Package\Sequence Container 2"
+          TopLeft="1141.80188679245,108.311320754717" />
+        <NodeLayout
+          Size="268,44"
+          Id="Package\Sequence Container 3\Conclude the report generation process"
+          TopLeft="35.6981132075471,110.358490566038" />
+        <NodeLayout
+          Size="246,44"
+          Id="Package\Sequence Container 3\Update process progress - Step 99"
+          TopLeft="46.0754716981132,12.1509433962265" />
+        <NodeLayout
+          Size="283,42"
+          Id="Package\Sequence Container 3\Update process progress - Step 99 Closing"
+          TopLeft="24.0188679245284,219.867924528302" />
+        <EdgeLayout
+          Id="Package\Sequence Container 3.PrecedenceConstraints[Constraint]"
+          TopLeft="169.38679245283,56.1509433962265">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,54.2075471698113"
+              Start="0,0"
+              End="0,46.7075471698113">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46.7075471698113" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container 3.PrecedenceConstraints[Constraint 15]"
+          TopLeft="167.608490566038,154.358490566038">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65.5094339622642"
+              Start="0,0"
+              End="0,58.0094339622642">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,58.0094339622642" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.24134765625,24.1302052623821,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.283018867924525"
+          IsExpanded="True"
+          PanelSize="331,298"
+          Size="331,341"
+          Id="Package\Sequence Container 3"
+          TopLeft="270.820754716981,485.745283018868" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="855.349056603774,913.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,97.03773584906"
+              Start="0,0"
+              End="0,89.53773584906">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,89.53773584906" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="860.698113207548,1177.53773584906">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,113.84905660377"
+              Start="0,0"
+              End="0,106.34905660377">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,106.34905660377" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="855.790880503145,336.311320754717">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,147.188679245283"
+              Start="0,0"
+              End="0,139.688679245283">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,139.688679245283" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-8,61.8443396226415,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="1044.89622641509,1095.27358490566">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="104.245283018868,0"
+              Start="0,0"
+              End="96.7452830188677,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="96.7452830188677,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="33.1312938531838,5,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="1218.5,1666.52358490566">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="92.80188679245,0"
+              Start="0,0"
+              End="85.30188679245,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="85.30188679245,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="27.409595739975,5,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="968.61320754717,221.811320754717">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="173.188679245283,0"
+              Start="0,0"
+              End="165.688679245283,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="165.688679245283,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="67.6029919663915,5,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 8]"
+          TopLeft="1024.80188679245,696.183962264151">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="128.396226415097,0"
+              Start="0,0"
+              End="120.896226415097,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="120.896226415097,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="45.2067655512985,5,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 9]"
+          TopLeft="751.946540880503,336.311320754717">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-315.625786163522,149.433962264151"
+              Start="0,0"
+              End="-315.625786163522,141.933962264151">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,56.2101539980937" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,56.2101539980937"
+                    Point2="0,60.2101539980937"
+                    Point3="-4,60.2101539980937" />
+                  <mssgle:LineSegment
+                    End="-311.625786163522,60.2101539980937" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-311.625786163522,60.2101539980937"
+                    Point2="-315.625786163522,60.2101539980937"
+                    Point3="-315.625786163522,64.2101539980937" />
+                  <mssgle:LineSegment
+                    End="-315.625786163522,141.933962264151" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-165.812893081761,65.2101539980937,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="353,47"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW"
+          TopLeft="68,37" />
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+          TopLeft="52,161" />
+        <EdgeLayout
+          Id="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task.Paths[ADO NET Source Output]"
+          TopLeft="245.25,84">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,77"
+              Start="0,0"
+              End="0,69.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,69.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Destination - TIMS COLLINT_LRS_LONG_LAT_RESULTS">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Copy parameters from SQL Server CI to Oracle TIMS\Data Flow Task\ADO NET Source - Analytics TIMS_LRS_Input_data_VW">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="314,42"
+          Id="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS"
+          TopLeft="79,155" />
+        <NodeLayout
+          Size="378,45"
+          Id="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS"
+          TopLeft="52,40" />
+        <EdgeLayout
+          Id="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI.Paths[ADO NET Source Output]"
+          TopLeft="238.5,85">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,70"
+              Start="0,0"
+              End="0,62.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,62.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Destination - Analytics CI_Collision_LRS">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Copy results from TIMS to CI\Copy the LRS data from TIMS to CI\ADO NET Source - TIMS COLLINT_LRS_LONG_LAT_RESULTS">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
