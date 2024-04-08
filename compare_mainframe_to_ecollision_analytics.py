@@ -97,6 +97,20 @@ def add_leading_zero(df, column_name):
     
     return df_copy[column_name]
 
+def remove_space(df, column_name):
+    """
+    Remove spaces from the specified column in the given DataFrame.
+    
+    Args:
+        df (pandas.DataFrame): The DataFrame from which spaces are to be removed.
+        column_name (str): The name of the column from which spaces are to be removed.
+        
+    Returns:
+        pandas.DataFrame: The DataFrame with spaces removed from the specified column.
+    """
+    df[column_name] = df[column_name].str.replace(" ", "")
+    return df[column_name]
+
 if all_year_switch:
     mainframe_year_file = [
         'mainframe_extract_collisions_2000.csv',
@@ -133,7 +147,7 @@ else:
 # Read and concatenate mainframe CSV files
 df_mainframe = pd.concat([pd.read_csv(file) for file in mainframe_year_file], ignore_index=True)
 df_mainframe_full = df_mainframe.copy()
-df_mainframe_full['case_number'] = add_leading_zero(df_mainframe_full, 'case_number')
+df_mainframe_full['case_number'] = remove_space(df_mainframe_full, 'case_number')
 df_mainframe = df_mainframe[['case_number', 'case_year', 'police_file_number', 'police_service_code', 'on_highway', 'occurrence_date', 'occurrence_time']]
 
 # Read SQL CSV file
@@ -142,9 +156,9 @@ df_sql = pd.read_csv(ecollision_analytics_sql_file)
 # Col manipulation
 df_mainframe['police_file_number'] = df_mainframe['police_file_number'].apply(remove_non_alphanumeric)
 df_sql['PFN_FILE_NBR'] = df_sql['PFN_FILE_NBR'].apply(remove_non_alphanumeric)
-df_mainframe['case_number'] = add_leading_zero(df_mainframe, 'case_number')
-df_sql['CASE_NBR'] = add_leading_zero(df_sql, 'CASE_NBR')
-df_sql['CASE_NBR'] = add_leading_zero(df_sql, 'CASE_NBR')
+df_mainframe['case_number'] = remove_space(df_mainframe, 'case_number')
+df_sql['CASE_NBR'] = remove_space(df_sql, 'CASE_NBR')
+df_sql['CASE_NBR'] = remove_space(df_sql, 'CASE_NBR')
 
 # Var type declaration
 df_mainframe['case_year'] = df_mainframe['case_year'].astype(int).astype(str)

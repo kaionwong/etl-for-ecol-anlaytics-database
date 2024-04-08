@@ -3,7 +3,9 @@
 SELECT c.ID [Collision_ID]
       ,c.[CASE_NBR]
 	  ,c.[CASE_YEAR]
+	  ,c.[FORM_CASE_NBR]
 	  ,c.[SEVERITY_OF_COLLISION_ID]
+	  ,c.[PFN_FILE_NBR]
 	  ,CASE WHEN [SEVERITY_OF_COLLISION_ID]=4 THEN 'Fatal'
 			WHEN [SEVERITY_OF_COLLISION_ID]=5 THEN 'Injury'
 			WHEN [SEVERITY_OF_COLLISION_ID]=6 THEN 'Property Damage'
@@ -11,6 +13,7 @@ SELECT c.ID [Collision_ID]
 	  ,c.[LOC_IN_CITY_FLAG]
       ,c.[LOC_DESC]
       ,c.[LOC_HWY_NBR]
+	  ,hwy.[HIGHWAY]
 	  ,CASE WHEN LOC_HWY_NBR in ('1','1A','1X','2','2A','3','3A','4','4E','5','6','7','8','9','10','10X'
 						,'11','11A','12','12A','13','13A','14','14X','15','16','16A','16X','17','18','19','20','20A'
 						,'21','22','22X','23','24','25','26','27','28','28A','29'
@@ -265,6 +268,7 @@ LEFT JOIN [ECRDBA].[CL_OBJECTS] obj on c.ID=obj.Collision_ID
 LEFT JOIN [ECRDBA].[CLOBJ_PARTY_INFO] par on par.ID=obj.Party_ID
 LEFT JOIN [ECRDBA].[CLOBJ_PROPERTY_INFO] pro on pro.ID=par.[OPERATED_PROPERTY_ID]
 LEFT JOIN [ECRDBA].[CLOBJ_PROPERTY_INFO] pro1 on pro1.ID=obj.Property_ID			--add Vehicle Type to Parked Vehicle
+LEFT JOIN [ECRDBA].[ECR_COLL_PLOTTING_INFO] hwy on c.ID=hwy.Collision_ID
 
 LEFT JOIN (SELECT b.ID Obj_ID													----add Vehicle Type to Passenger, no Parked Vehicle
 				 ,d.[OBJECT_IDENTIFICATION_TYPE_ID]
@@ -370,12 +374,13 @@ AND c.Case_Year in (2000, 2001, 2002, 2014, 2015, 2016)
 
 -- Flat file
 select
-	ID as COLLISION_ID
+	COLLISION_ID
 	, CASE_NBR
 	, PFN_FILE_NBR
 	, FORM_CASE_NBR
 	, CASE_YEAR
 	, OCCURENCE_TIMESTAMP
+	, LOC_HWY_NBR
 	, HIGHWAY
 	, POLICE_SERVICE_CODE
 from MainTable

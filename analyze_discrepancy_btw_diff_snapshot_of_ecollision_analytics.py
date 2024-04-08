@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Control panel
-select_year = 2022
 select_year_list = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
                     2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
                     2020, 2021, 2022, 2023, 2024]
@@ -18,6 +17,24 @@ select_year_list = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
 case_number_standardization_switch = True
 print_switch = True
 example_n = 15
+
+# >>> Input data and label setting #1
+# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv'
+# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
+# data_label_1 = 'snapshot_2024'
+# data_label_2 = 'snapshot_2024-03-28'
+
+# >>> Input data and label setting #2
+# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv' 
+# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
+# data_label_1 = 'snapshot_2024'
+# data_label_2 = 'snapshot_2024-04-02'
+
+# >>> Input data and label setting #3
+extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
+extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
+data_label_1 = 'snapshot_2024-03-28'
+data_label_2 = 'snapshot_2024-04-07'
 
 # Helper functions
 def pandas_output_setting():
@@ -51,7 +68,8 @@ def add_leading_zero(df, column_name):
     df_copy = df.copy()
 
     # Remove leading and trailing spaces from the specified column
-    df_copy[column_name] = df_copy[column_name].apply(lambda x: str(x).strip())
+    # df_copy[column_name] = df_copy[column_name].apply(lambda x: str(x).strip())
+    df_copy[column_name] = df_copy[column_name].apply(lambda x: str(x).replace(" ", ""))
 
     # Convert the specified column to string
     df_copy[column_name] = df_copy[column_name].astype(str)
@@ -61,27 +79,23 @@ def add_leading_zero(df, column_name):
     
     return df_copy[column_name]
 
+def remove_space(df, column_name):
+    """
+    Remove spaces from the specified column in the given DataFrame.
+    
+    Args:
+        df (pandas.DataFrame): The DataFrame from which spaces are to be removed.
+        column_name (str): The name of the column from which spaces are to be removed.
+        
+    Returns:
+        pandas.DataFrame: The DataFrame with spaces removed from the specified column.
+    """
+    df[column_name] = df[column_name].str.replace(" ", "")
+    return df[column_name]
+
 # eCollision Analytics extracts from 2 different snapshots
 # Note: even though the earlier snapshot was taken in 2022, since by 2022 the finalized year was 2020,
 # so the following compatative analytics will only be done on 2020 or earlier year
-
-# >>> Input data and label setting #1
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv'
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-03-28'
-
-# >>> Input data and label setting #2
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv' 
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-04-02'
-
-# >>> Input data and label setting #3
-extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-data_label_1 = 'snapshot_2024-03-28'
-data_label_2 = 'snapshot_2024-04-02'
 
 # Read and concatenate mainframe CSV files
 df_snapshot1 = pd.read_csv(extract_sql_snapshot1, low_memory=False)
@@ -98,8 +112,8 @@ df_snapshot2['PFN_FILE_NBR'] = df_snapshot2['PFN_FILE_NBR'].apply(remove_non_alp
 # This standardize the CASE_NBR; but in some cases, one may turn this off to see natively if the
 # ... pre-standardized CASE_NBR match (they should between snapshots from the same db)
 if case_number_standardization_switch:
-    df_snapshot1['CASE_NBR'] = add_leading_zero(df_snapshot1, 'CASE_NBR')
-    df_snapshot2['CASE_NBR'] = add_leading_zero(df_snapshot2, 'CASE_NBR')
+    df_snapshot1['CASE_NBR'] = remove_space(df_snapshot1, 'CASE_NBR')
+    df_snapshot2['CASE_NBR'] = remove_space(df_snapshot2, 'CASE_NBR')
 
 def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=False):
     df_snapshot1 = df_snapshot1.copy()
@@ -108,8 +122,15 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
     # All years together:
     if all_year_switch:
         if print_switch:
+            print(f'df_snapshot1 refers to', data_label_1)
+            print(f'df_snapshot2 refers to', data_label_2)
+            print()
+            print(f'df_snapshot1 filename:', extract_sql_snapshot1)
+            print(f'df_snapshot2 filename:', extract_sql_snapshot2)
+            print()
             print(f'Number of rows in df_snapshot1, n', len(df_snapshot1))
             print(f'Number of rows in df_snapshot2, n', len(df_snapshot2))
+            print()
 
             # Comparing COLLISION_ID between two snapshots
             print('>>> Comparing COLLISION_ID between two snapshots:')
@@ -140,60 +161,60 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
             print(df_count_diff)
             print()
 
-            print(f'Number of COLLISION_ID in snapshot1 but not in snapshot2, n:', len(collision_id_only_in_snapshot1))
+            print(f'Number of COLLISION_ID in {data_label_1} but not in {data_label_2}, n:', len(collision_id_only_in_snapshot1))
             print(collision_id_only_in_snapshot1[0:example_n])
             print(df_snapshot1[df_snapshot1['COLLISION_ID'].isin(collision_id_only_in_snapshot1)].head())
             print(df_snapshot1[df_snapshot1['COLLISION_ID'].isin(collision_id_only_in_snapshot1)].tail())
             print()
         
-            print('>>> Further investigation - begin')
-            print('In snapshot1, COLLISION_ID=2211768 and CASE_NBR=5000873')
-            print(df_snapshot1[df_snapshot1['COLLISION_ID']==2211768])
-            print('In snapshot1, COLLISION_ID=2211768 and CASE_NBR=5000873 is in snapshot1 but not in snapshot2')
-            print('To confirm, eCollision analytics does not have that CASE_NBR=5000873')
-            print(df_snapshot2[df_snapshot2['CASE_NBR']==5000873])
-            print()
-            print('However for earlier discrepancies')
-            print('In snapshot1, COLLISION_ID=-2275487 and CASE_NBR=1099039 is in snapshot1 but not in snapshot2')
-            print('However, eCollision analytics does have CASE_NBR=1099039, where COLLISION_ID=1979035')
-            print(df_snapshot2[df_snapshot2['CASE_NBR']==1099039])
-            print('>>> Further investigation - end')
-            print()
+            # print('>>> Further investigation - begin')
+            # print('In {data_label_1}, COLLISION_ID=2211768 and CASE_NBR=5000873')
+            # print(df_snapshot1[df_snapshot1['COLLISION_ID']==2211768])
+            # print(f'In {data_label_1}, COLLISION_ID=2211768 and CASE_NBR=5000873 is in {data_label_1} but not in {data_label_2}')
+            # print('To confirm, eCollision analytics does not have that CASE_NBR=5000873')
+            # print(df_snapshot2[df_snapshot2['CASE_NBR']==5000873])
+            # print()
+            # print('However for earlier discrepancies')
+            # print(f'In {data_label_1}, COLLISION_ID=-2275487 and CASE_NBR=1099039 is in {data_label_1} but not in {data_label_2}')
+            # print('However, eCollision analytics does have CASE_NBR=1099039, where COLLISION_ID=1979035')
+            # print(df_snapshot2[df_snapshot2['CASE_NBR']==1099039])
+            # print('>>> Further investigation - end')
+            # print()
 
-            print(f'Number of COLLISION_ID in snapshot2 but not in snapshot1, n:', len(collision_id_only_in_snapshot2))
+            print(f'Number of COLLISION_ID in {data_label_2} but not in {data_label_1}, n:', len(collision_id_only_in_snapshot2))
             print(collision_id_only_in_snapshot2[0:example_n])
             print(df_snapshot2[df_snapshot2['COLLISION_ID'].isin(collision_id_only_in_snapshot2)].head())
             print(df_snapshot2[df_snapshot2['COLLISION_ID'].isin(collision_id_only_in_snapshot2)].tail())
             print()
 
             print('>>> Comparing CASE_NBR between two snapshots:')
-            case_number_list_snapshot_2022 = df_snapshot1['CASE_NBR'].to_list()
-            case_number_list_snapshot_2024 = df_snapshot2['CASE_NBR'].to_list()
+            case_number_list_snapshot1 = df_snapshot1['CASE_NBR'].to_list()
+            case_number_list_snapshot2 = df_snapshot2['CASE_NBR'].to_list()
 
-            assert len(case_number_list_snapshot_2022) > 0 and len(case_number_list_snapshot_2024) > 0
+            assert len(case_number_list_snapshot1) > 0 and len(case_number_list_snapshot2) > 0
 
-            case_number_only_in_snapshot_2022 = list(set(case_number_list_snapshot_2022) - set(case_number_list_snapshot_2024))
-            case_number_only_in_snapshot_2024 = list(set(case_number_list_snapshot_2024) - set(case_number_list_snapshot_2022))
+            case_number_only_in_snapshot1 = list(set(case_number_list_snapshot1) - set(case_number_list_snapshot2))
+            case_number_only_in_snapshot2 = list(set(case_number_list_snapshot2) - set(case_number_list_snapshot1))
 
-            print(f'Number of CASE_NBR in snapshot1 but not in snapshot2, n:', len(case_number_only_in_snapshot_2022))
-            print(case_number_only_in_snapshot_2022[0:example_n])
-            print(f'Number of CASE_NBR in snapshot2 but not in snapshot1, n:', len(case_number_only_in_snapshot_2024))
-            print(case_number_only_in_snapshot_2024[0:example_n])
+            print(f'Number of CASE_NBR in {data_label_1} but not in {data_label_2}, n:', len(case_number_only_in_snapshot1))
+            print(case_number_only_in_snapshot1[0:example_n])
+            print(f'Number of CASE_NBR in {data_label_2} but not in {data_label_1}, n:', len(case_number_only_in_snapshot2))
+            print(case_number_only_in_snapshot2[0:example_n])
             print()
         
             print('>>> Comparing PFN_FILE_NBR between two snapshots:')
-            pfn_list_snapshot_2022 = df_snapshot1['PFN_FILE_NBR'].to_list()
-            pfn_list_snapshot_2024 = df_snapshot2['PFN_FILE_NBR'].to_list()
+            pfn_list_snapshot1 = df_snapshot1['PFN_FILE_NBR'].to_list()
+            pfn_list_snapshot2 = df_snapshot2['PFN_FILE_NBR'].to_list()
 
-            assert len(pfn_list_snapshot_2022) > 0 and len(pfn_list_snapshot_2024) > 0
+            assert len(pfn_list_snapshot1) > 0 and len(pfn_list_snapshot2) > 0
 
-            pfn_only_in_snapshot_2022 = list(set(pfn_list_snapshot_2022) - set(pfn_list_snapshot_2024))
-            pfn_only_in_snapshot_2024 = list(set(pfn_list_snapshot_2024) - set(pfn_list_snapshot_2022))
+            pfn_only_in_snapshot1 = list(set(pfn_list_snapshot1) - set(pfn_list_snapshot2))
+            pfn_only_in_snapshot2 = list(set(pfn_list_snapshot2) - set(pfn_list_snapshot1))
 
-            print(f'Number of PFN_FILE_NBR in snapshot1 but not in snapshot2, n:', len(pfn_only_in_snapshot_2022))
-            print(pfn_only_in_snapshot_2022[0:example_n])
-            print(f'Number of PFN_FILE_NBR in snapshot2 but not in snapshot1, n:', len(pfn_only_in_snapshot_2024))
-            print(pfn_only_in_snapshot_2024[0:example_n])
+            print(f'Number of PFN_FILE_NBR in {data_label_1} but not in {data_label_2}, n:', len(pfn_only_in_snapshot1))
+            print(pfn_only_in_snapshot1[0:example_n])
+            print(f'Number of PFN_FILE_NBR in {data_label_2} but not in {data_label_1}, n:', len(pfn_only_in_snapshot2))
+            print(pfn_only_in_snapshot2[0:example_n])
             print()
 
     # Filter by year
@@ -214,40 +235,40 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
         collision_id_only_in_snapshot1_yr = list(set(collision_id_list_snapshot1_yr) - set(collision_id_list_snapshot2_yr))
         collision_id_only_in_snapshot2_yr = list(set(collision_id_list_snapshot2_yr) - set(collision_id_list_snapshot1_yr))
 
-        print(f'Number of COLLISION_ID in year {filter_year} in snapshot1 but not in snapshot2, n:', len(collision_id_only_in_snapshot1_yr))
+        print(f'Number of COLLISION_ID in year {filter_year} in {data_label_1} but not in {data_label_2}, n:', len(collision_id_only_in_snapshot1_yr))
         print(collision_id_only_in_snapshot1_yr[0:example_n])
-        print(f'Number of COLLISION_ID in year {filter_year} in snapshot2 but not in snapshot1, n:', len(collision_id_only_in_snapshot2_yr))
+        print(f'Number of COLLISION_ID in year {filter_year} in {data_label_2} but not in {data_label_1}, n:', len(collision_id_only_in_snapshot2_yr))
         print(collision_id_only_in_snapshot2_yr[0:example_n])
         print()
 
         print('>>> Comparing CASE_NBR between two snapshots')
-        case_number_list_snapshot_2022_yr = df_snapshot1_yr['CASE_NBR'].to_list()
-        case_number_list_snapshot_2024_yr = df_snapshot2_yr['CASE_NBR'].to_list()
+        case_number_list_snapshot1_yr = df_snapshot1_yr['CASE_NBR'].to_list()
+        case_number_list_snapshot2_yr = df_snapshot2_yr['CASE_NBR'].to_list()
 
-        assert len(case_number_list_snapshot_2022_yr) > 0 and len(case_number_list_snapshot_2024_yr) > 0
+        assert len(case_number_list_snapshot1_yr) > 0 and len(case_number_list_snapshot2_yr) > 0
 
-        case_number_only_in_snapshot_2022_yr = list(set(case_number_list_snapshot_2022_yr) - set(case_number_list_snapshot_2024_yr))
-        case_number_only_in_snapshot_2024_yr = list(set(case_number_list_snapshot_2024_yr) - set(case_number_list_snapshot_2022_yr))
+        case_number_only_in_snapshot1_yr = list(set(case_number_list_snapshot1_yr) - set(case_number_list_snapshot2_yr))
+        case_number_only_in_snapshot2_yr = list(set(case_number_list_snapshot2_yr) - set(case_number_list_snapshot1_yr))
 
-        print(f'Number of CASE_NBR in year {filter_year} in snapshot1 but not in snapshot2, n:', len(case_number_only_in_snapshot_2022_yr))
-        print(case_number_only_in_snapshot_2022_yr[0:example_n])
-        print(f'Number of CASE_NBR in year {filter_year} in snapshot2 but not in snapshot1, n:', len(case_number_only_in_snapshot_2024_yr))
-        print(case_number_only_in_snapshot_2024_yr[0:example_n])
+        print(f'Number of CASE_NBR in year {filter_year} in {data_label_1} but not in {data_label_2}, n:', len(case_number_only_in_snapshot1_yr))
+        print(case_number_only_in_snapshot1_yr[0:example_n])
+        print(f'Number of CASE_NBR in year {filter_year} in {data_label_2} but not in {data_label_1}, n:', len(case_number_only_in_snapshot2_yr))
+        print(case_number_only_in_snapshot2_yr[0:example_n])
         print()
 
         print('>>> Comparing PFN_FILE_NBR between two snapshots')
-        pfn_list_snapshot_2022_yr = df_snapshot1_yr['PFN_FILE_NBR'].to_list()
-        pfn_list_snapshot_2024_yr = df_snapshot2_yr['PFN_FILE_NBR'].to_list()
+        pfn_list_snapshot1_yr = df_snapshot1_yr['PFN_FILE_NBR'].to_list()
+        pfn_list_snapshot2_yr = df_snapshot2_yr['PFN_FILE_NBR'].to_list()
 
-        assert len(pfn_list_snapshot_2022_yr) > 0 and len(case_number_list_snapshot_2024_yr) > 0
+        assert len(pfn_list_snapshot1_yr) > 0 and len(case_number_list_snapshot2_yr) > 0
 
-        pfn_only_in_snapshot_2022_yr = list(set(pfn_list_snapshot_2022_yr) - set(pfn_list_snapshot_2024_yr))
-        pfn_only_in_snapshot_2024_yr = list(set(pfn_list_snapshot_2024_yr) - set(pfn_list_snapshot_2022_yr))
+        pfn_only_in_snapshot1_yr = list(set(pfn_list_snapshot1_yr) - set(pfn_list_snapshot2_yr))
+        pfn_only_in_snapshot2_yr = list(set(pfn_list_snapshot2_yr) - set(pfn_list_snapshot1_yr))
 
-        print(f'Number of PFN_FILE_NBR in year {filter_year} in snapshot1 but not in snapshot2, n:', len(pfn_only_in_snapshot_2022_yr))
-        print(pfn_only_in_snapshot_2022_yr[0:example_n])
-        print(f'Number of PFN_FILE_NBR in year {filter_year} in snapshot2 but not in snapshot1, n:', len(pfn_only_in_snapshot_2024_yr))
-        print(pfn_only_in_snapshot_2024_yr[0:example_n])
+        print(f'Number of PFN_FILE_NBR in year {filter_year} in {data_label_1} but not in {data_label_2}, n:', len(pfn_only_in_snapshot1_yr))
+        print(pfn_only_in_snapshot1_yr[0:example_n])
+        print(f'Number of PFN_FILE_NBR in year {filter_year} in {data_label_2} but not in {data_label_1}, n:', len(pfn_only_in_snapshot2_yr))
+        print(pfn_only_in_snapshot2_yr[0:example_n])
         print()
 
 if __name__ == '__main__':

@@ -42,6 +42,20 @@ def add_leading_zero(df, column_name):
     
     return df_copy[column_name]
 
+def remove_space(df, column_name):
+    """
+    Remove spaces from the specified column in the given DataFrame.
+    
+    Args:
+        df (pandas.DataFrame): The DataFrame from which spaces are to be removed.
+        column_name (str): The name of the column from which spaces are to be removed.
+        
+    Returns:
+        pandas.DataFrame: The DataFrame with spaces removed from the specified column.
+    """
+    df[column_name] = df[column_name].str.replace(" ", "")
+    return df[column_name]
+
 # Control panel
 print_switch = True
 graph_switch = True
@@ -67,10 +81,10 @@ df_oracle = pd.read_csv(csv_file_path_oracle)
 df_discrepancy['occurrence_date'] = pd.to_datetime(df_discrepancy['occurrence_date'], errors='coerce')
 df_discrepancy['year_month'] = df_discrepancy['occurrence_date'].dt.to_period('M')
 df_discrepancy['police_file_number'] = df_discrepancy['police_file_number'].apply(remove_non_alphanumeric)
-df_discrepancy['case_number'] = add_leading_zero(df_discrepancy, 'case_number')
+df_discrepancy['case_number'] = remove_space(df_discrepancy, 'case_number')
 
 df_oracle['PFN_FILE_NBR'] = df_oracle['PFN_FILE_NBR'].apply(remove_non_alphanumeric)
-df_oracle['CASE_NBR'] = add_leading_zero(df_oracle, 'CASE_NBR')
+df_oracle['CASE_NBR'] = remove_space(df_oracle, 'CASE_NBR')
 
 # Create unique lists
 list_case_number_from_df_discrepancy = list(set(df_discrepancy['case_number'].to_list()))
