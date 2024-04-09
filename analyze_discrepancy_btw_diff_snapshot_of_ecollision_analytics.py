@@ -32,9 +32,9 @@ example_n = 15
 
 # >>> Input data and label setting #3
 extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
+extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-09.csv'
 data_label_1 = 'snapshot_2024-03-28'
-data_label_2 = 'snapshot_2024-04-07'
+data_label_2 = 'snapshot_2024-04-09'
 
 # Helper functions
 def pandas_output_setting():
