@@ -46,9 +46,9 @@ filename_2024_04_19 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot
 filename_2024_04_24 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-24.csv'
 filename_2024_04_25 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-25.csv'
 
-test_var = 'CASE_NBR' # None; 'case_number'; 'CASE_NBR'; 'COLLISION_ID'; 'PFN_FILE_NBR'
-test_string = '1446996'
-used_filename = filename_2024_04_07 # select data file to load
+test_var = 'COLLISION_ID' # None; 'case_number'; 'CASE_NBR'; 'COLLISION_ID'; 'PFN_FILE_NBR'
+test_string = '2690043'
+used_filename = filename_2024_03_28 # select data file to load
 
 df = pd.read_csv(used_filename)
 
