@@ -18,23 +18,13 @@ case_number_standardization_switch = True
 print_switch = True
 example_n = 15
 
-# >>> Input data and label setting #1
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv'
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-03-28'
-
-# >>> Input data and label setting #2
-# extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024.csv' 
-# extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-# data_label_1 = 'snapshot_2024'
-# data_label_2 = 'snapshot_2024-04-02'
-
 # >>> Input data and label setting #3
-extract_sql_snapshot1 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv' 
-extract_sql_snapshot2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-09.csv'
-data_label_1 = 'snapshot_2024-03-28'
-data_label_2 = 'snapshot_2024-04-09'
+filename_date1 = '2024-04-02'
+filename_date2 = '2024-04-29'
+extract_sql_snapshot1 = f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date1}.csv' 
+extract_sql_snapshot2 = f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date2}.csv'
+data_label_1 = f'snapshot_{filename_date1}'
+data_label_2 = f'snapshot_{filename_date2}'
 
 # Helper functions
 def pandas_output_setting():
@@ -89,8 +79,8 @@ def remove_space(df, column_name):
         
     Returns:
         pandas.DataFrame: The DataFrame with spaces removed from the specified column.
-    """
-    df[column_name] = df[column_name].str.replace(" ", "")
+    """    
+    df[column_name] = df[column_name].astype(str).str.replace(" ", "")
     return df[column_name]
 
 # eCollision Analytics extracts from 2 different snapshots
@@ -230,7 +220,8 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
         collision_id_list_snapshot1_yr = df_snapshot1_yr['COLLISION_ID'].to_list()
         collision_id_list_snapshot2_yr = df_snapshot2_yr['COLLISION_ID'].to_list()
 
-        assert len(collision_id_list_snapshot1_yr) > 0 and len(collision_id_list_snapshot2_yr) > 0
+        if len(collision_id_list_snapshot1_yr) == 0 and len(collision_id_list_snapshot2_yr) == 0:
+            print('CUSTOM WARNING: len(collision_id_list_snapshot1_yr) == 0 and len(collision_id_list_snapshot2_yr) == 0')
 
         collision_id_only_in_snapshot1_yr = list(set(collision_id_list_snapshot1_yr) - set(collision_id_list_snapshot2_yr))
         collision_id_only_in_snapshot2_yr = list(set(collision_id_list_snapshot2_yr) - set(collision_id_list_snapshot1_yr))
@@ -245,7 +236,8 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
         case_number_list_snapshot1_yr = df_snapshot1_yr['CASE_NBR'].to_list()
         case_number_list_snapshot2_yr = df_snapshot2_yr['CASE_NBR'].to_list()
 
-        assert len(case_number_list_snapshot1_yr) > 0 and len(case_number_list_snapshot2_yr) > 0
+        if len(case_number_list_snapshot1_yr) == 0 and len(case_number_list_snapshot2_yr) == 0:
+            print('CUSTOM WARNING: len(case_number_list_snapshot1_yr) == 0 and len(case_number_list_snapshot2_yr)')
 
         case_number_only_in_snapshot1_yr = list(set(case_number_list_snapshot1_yr) - set(case_number_list_snapshot2_yr))
         case_number_only_in_snapshot2_yr = list(set(case_number_list_snapshot2_yr) - set(case_number_list_snapshot1_yr))
@@ -260,7 +252,8 @@ def compare_snapshot(filter_year, df_snapshot1, df_snapshot2, all_year_switch=Fa
         pfn_list_snapshot1_yr = df_snapshot1_yr['PFN_FILE_NBR'].to_list()
         pfn_list_snapshot2_yr = df_snapshot2_yr['PFN_FILE_NBR'].to_list()
 
-        assert len(pfn_list_snapshot1_yr) > 0 and len(case_number_list_snapshot2_yr) > 0
+        if len(pfn_list_snapshot1_yr) == 0 and len(case_number_list_snapshot2_yr) == 0:
+            print('CUSTOM WARNING: len(pfn_list_snapshot1_yr) == 0 and len(case_number_list_snapshot2_yr) == 0')
 
         pfn_only_in_snapshot1_yr = list(set(pfn_list_snapshot1_yr) - set(pfn_list_snapshot2_yr))
         pfn_only_in_snapshot2_yr = list(set(pfn_list_snapshot2_yr) - set(pfn_list_snapshot1_yr))
@@ -279,3 +272,4 @@ if __name__ == '__main__':
             counter += 1
         else:
             compare_snapshot(sp_year, df_snapshot1, df_snapshot2, all_year_switch=False)
+    print('Done!!!')

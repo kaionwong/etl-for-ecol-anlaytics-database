@@ -36,16 +36,19 @@ def single_collision_record_search(df, test_input, varname=None):
 
         return record
 
-filename0 = 'mainframe_extract_collisions_2001.csv'
-filename = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024-03-xx.csv'
-filename2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv'
-filename3 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-filename4 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
-filename5 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-09.csv'
+filename_2001_xx_xx = 'mainframe_extract_collisions_2001.csv'
+filename_2024_03_xx = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024-03-xx.csv'
+filename_2024_03_28 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv'
+filename_2024_04_02 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
+filename_2024_04_07 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
+filename_2024_04_09 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-09.csv'
+filename_2024_04_19 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-19.csv'
+filename_2024_04_24 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-24.csv'
+filename_2024_04_25 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-25.csv'
 
 test_var = 'CASE_NBR' # None; 'case_number'; 'CASE_NBR'; 'COLLISION_ID'; 'PFN_FILE_NBR'
-test_string = '1447500'
-used_filename = filename2 # select data file to load
+test_string = '1446996'
+used_filename = filename_2024_04_07 # select data file to load
 
 df = pd.read_csv(used_filename)
 
