@@ -1,5 +1,5 @@
 SELECT c.ID [Collision_ID]
-      ,c.[CASE_NBR]
+    ,c.[CASE_NBR]
 	  ,c.[CASE_YEAR]
 	  ,c.[FORM_CASE_NBR]
 	  ,c.POLICE_SERVICE_CODE
