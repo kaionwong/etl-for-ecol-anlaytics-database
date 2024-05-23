@@ -27,7 +27,7 @@ StatusCount AS (
     GROUP BY 
         COLLISION_ID
     HAVING 
-        COUNT(*) > 1
+        COUNT(*) > 1 -- this controls the "multiple" same status part. If you set it to >1, it will ouput more than 1 of the "COLL_STATUS_TYPE_ID" specified above
 ),
 LatestEntries AS (
     SELECT 
