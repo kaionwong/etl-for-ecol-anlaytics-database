@@ -40,6 +40,16 @@ analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 
+# Apply date filter if both dates are provided
+if start_date_str is not None and end_date_str is not None:
+    # Convert OCCURENCE_TIMESTAMP into a date format that can be compared
+    df_analytics['OCCURENCE_TIMESTAMP'] = pd.to_datetime(df_analytics['OCCURENCE_TIMESTAMP'], format='%Y-%m-%d %H:%M:%S')
+    
+    start_date = pd.to_datetime(start_date_str)
+    end_date = pd.to_datetime(end_date_str)
+    date_mask = (df_analytics['OCCURENCE_TIMESTAMP'] >= start_date) & (df_analytics['OCCURENCE_TIMESTAMP'] <= end_date)
+    df_analytics = df_analytics[date_mask]
+
 # Output discrepancies
 # Generate the lists
 unique_mask = ~df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
