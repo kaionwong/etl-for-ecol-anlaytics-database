@@ -9,8 +9,8 @@ import pandas as pd
 
 folder_path = './output/'
 start_date_str = '2016-01-01'
-end_date_str = '2024-04-28'
-save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
+end_date_str = '2024-04-29' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
 
 # get oracle information
 oracle_filename = 'search_ecollision_oracle_with_upload_pending_on_cutoff_date_2024-05-23.csv'
@@ -57,8 +57,12 @@ print(f"Unique CASE_NBR in df_oracle (not in df_analytics), n={len(unique_case_n
 print(f"Common CASE_NBR in both df_oracle and df_analytics, n={len(common_case_nbr_list)}:", common_case_nbr_list)
 
 # Save the list
+df_oracle_discrepancy = df_oracle[df_oracle['CASE_NBR'].isin(unique_case_nbr_list)]
 if save_switch:
-    df_oracle_discrepancy = df_oracle[df_oracle['CASE_NBR'].isin(unique_case_nbr_list)]
-    output_filename = f'unique_case_number_from_oracle_not_in_ecollision_analytics_{start_date_str}_{end_date_str}.csv'
+    output_filename = f'unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}.csv'
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy.to_csv(output_file_path, index=False, header=True)
+
+# Summary output
+print('Discrepancy volume by year:', df_oracle_discrepancy['CASE_YEAR'].value_counts())
+print(f'IMPORTANT WARNING!!! Caveat: The last year will be overestimation due to {end_date_str} used as when this end date is applied to both df_oracle and df_analytics, it includes this last date for checking, but since it takes a day or a weekend (if the changes occurs on Friday), so the "discrepancy" or missing cases in eCollision Analytics for the last day is simply due to time required to sync from eCollision Oracle to eCollision Analytics.')
