@@ -53,7 +53,11 @@ def remove_space(df, column_name):
     Returns:
         pandas.DataFrame: The DataFrame with spaces removed from the specified column.
     """
-    df[column_name] = df[column_name].str.replace(" ", "")
+    # Ensure the column is of string type
+    # df[column_name] = df[column_name].str.replace(" ", "")
+    # return df[column_name]
+
+    df[column_name] = df[column_name].astype(str).str.replace(" ", "")
     return df[column_name]
 
 # Control panel
