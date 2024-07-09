@@ -1,31 +1,3 @@
-WITH LatestCases AS (
-    SELECT 
-        ID, 
-        COLLISION_ID, 
-        CASE_YEAR, 
-        ACTION_TYPE, 
-        CREATE_TIMESTAMP, 
-        FINISH_TIMESTAMP, 
-        CASE_NUMBER,
-        ROW_NUMBER() OVER (PARTITION BY CASE_NUMBER ORDER BY CREATE_TIMESTAMP DESC) AS rn
-    FROM 
-        ecrdba.ecr_synchronization_action_log
-    WHERE 
---        CASE_NUMBER IN (
---            '1425125', '1421842', '1434073', '1418704', '1404591', '8564609', '1437754', '1421628', '1419087', '1426825', '5146947', '1420128', '1434165', '5133935', '5184698', '1416977', '1423205', '1393437', '1427646', '1403183', '1401759', '1427756', '1423467', '1417362', '1414785', '1429081', '1431453', '1438196', '1396576', '1400169', '1417166', '1409047', '1397347', '1436630', '5135811', '1393882', '8544744', '1407100', '1414635', '5123026', '1407668', '1413177', '1406432', '5150803', '1422158', '1396768', '1434416', '1403590', '1410440', '1405865', '1412881', '802189'
---        )
-          CASE_NUMBER IN ('802189')
-)
-SELECT 
-    ID, 
-    COLLISION_ID, 
-    CASE_YEAR, 
-    ACTION_TYPE, 
-    CREATE_TIMESTAMP, 
-    FINISH_TIMESTAMP, 
-    CASE_NUMBER
-FROM 
-    LatestCases
-WHERE 1=1
-    AND rn = 1 
-    AND ACTION_TYPE <> 'D';
+select * from ecrdba.ecr_synchronization_action_log
+where case_number in ('1446310')
+order by create_timestamp desc
