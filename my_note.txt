@@ -6,3 +6,13 @@ eCollision Analytics quality assessment processes
 - categorize the nature/characteristics of missing cases
 - create a CGI ticket to conduct root-cause analysis and change code to rectify the issues
 - confirm by continuously run this current process as if the root cause is removed, less or no erroneously deleted/misisng cases should be found
+
+//////
+
+record the time to save eCollision Oracle extract
+start-time = 4:43pm
+intermediate time = 4:50pm
+written size = 16MB
+
+intermediate time = 4:52pm 
+written size = 30M

@@ -8,13 +8,16 @@
 import pandas as pd
 
 folder_path = './output/'
-start_date_str = '2016-01-01'
-end_date_str = '2024-04-29' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
-save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
+start_date_str = '2024-05-27'
+end_date_str = '2024-06-30' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+buffer_days = 4 # if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics
+save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
+date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
+date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'search_ecollision_oracle_with_upload_pending_on_cutoff_date_2024-05-23.csv'
-oracle_file_path = folder_path + oracle_filename
+oracle_filename = 'extract_ecollision_oracle_with_upload_pending_on_cutoff_date_2024-07-09.csv'
+oracle_file_path = oracle_filename
 df_oracle = pd.read_csv(oracle_file_path)
 
 # Clean and type-set CASE_NBR
@@ -23,27 +26,34 @@ df_oracle = df_oracle[df_oracle['CUTOFF_UPLOAD_PENDING_FLAG']==1]
 
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
-    # Convert OCCURENCE_TIMESTAMP into a date format that can be compared
-    df_oracle['OCCURENCE_TIMESTAMP'] = pd.to_datetime(df_oracle['OCCURENCE_TIMESTAMP'], format='%y-%m-%d')
+    # Convert date_var_used_for_df_oracle into a date format that can be compared
+    df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], format='%y-%m-%d')
     start_date = pd.to_datetime(start_date_str)
     end_date = pd.to_datetime(end_date_str)
-    date_mask = (df_oracle['OCCURENCE_TIMESTAMP'] >= start_date) & (df_oracle['OCCURENCE_TIMESTAMP'] <= end_date)
+    date_mask = (df_oracle[date_var_used_for_df_oracle] >= start_date) & (df_oracle[date_var_used_for_df_oracle] <= end_date)
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-05-24.csv'
+analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-07-09.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
     # Convert OCCURENCE_TIMESTAMP into a date format that can be compared
-    df_analytics['OCCURENCE_TIMESTAMP'] = pd.to_datetime(df_analytics['OCCURENCE_TIMESTAMP'], format='%Y-%m-%d %H:%M:%S')
-    
+    df_analytics[date_var_used_for_df_analytics] = pd.to_datetime(df_analytics[date_var_used_for_df_analytics], format='%Y-%m-%d %H:%M:%S')
     start_date = pd.to_datetime(start_date_str)
-    end_date = pd.to_datetime(end_date_str)
-    date_mask = (df_analytics['OCCURENCE_TIMESTAMP'] >= start_date) & (df_analytics['OCCURENCE_TIMESTAMP'] <= end_date)
-    df_analytics = df_analytics[date_mask]
+    
+    if buffer_days > 0:
+        end_date = pd.to_datetime(end_date_str)
+        buffered_end_date = end_date + pd.Timedelta(days=buffer_days)
+        date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= buffered_end_date)
+        df_analytics = df_analytics[date_mask]
+    
+    else:
+        end_date = pd.to_datetime(end_date_str)
+        date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= end_date)
+        df_analytics = df_analytics[date_mask]
 
 # Output discrepancies
 # Generate the lists
