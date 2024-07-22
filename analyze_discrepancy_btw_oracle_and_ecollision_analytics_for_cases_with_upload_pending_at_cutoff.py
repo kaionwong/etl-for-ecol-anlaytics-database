@@ -11,12 +11,12 @@ folder_path = './output/'
 start_date_str = '2021-01-01'
 end_date_str = '2021-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 20 # if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
-save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
+save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'extract_ecollision_oracle_with_upload_pending_on_cutoff_date_2024-07-09.csv'
+oracle_filename = 'extract_ecollision_oracle_with_upload_pending_on_cutoff_date_2024-07-09_vIncludedUploadedAsLatest.csv'
 oracle_file_path = oracle_filename
 df_oracle = pd.read_csv(oracle_file_path)
 

@@ -24,21 +24,21 @@ WITH CollisionCutoffDates AS (
 ),
 CollisionEarliestDate AS (
     -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision an preset cut-off date
-    SELECT 
-        collision_id, 
+    SELECT
+        collision_id,
         MIN(TO_DATE(CREATED_TIMESTAMP, 'YY-MM-DD')) AS earliest_created_date
     FROM ecrdba.cl_status_history
     GROUP BY collision_id
 ),
 CollisionCaseYear AS (
-    SELECT 
+    SELECT
         ced.collision_id,
         EXTRACT(YEAR FROM ced.earliest_created_date) AS case_year,
         ced.earliest_created_date
     FROM CollisionEarliestDate ced
 ),
 CollisionWithCutoff AS (
-    SELECT 
+    SELECT
         ccy.collision_id,
         ccy.case_year,
         ccd.cutoff_end_date
@@ -53,17 +53,17 @@ CollisionStatusOnCutoff AS (
         csh.COLL_STATUS_TYPE_ID,
         csh.EFFECTIVE_DATE,
         ROW_NUMBER() OVER (
-            PARTITION BY cwc.collision_id 
+            PARTITION BY cwc.collision_id
             ORDER BY csh.COLL_STATUS_TYPE_ID DESC, csh.EFFECTIVE_DATE DESC
         ) AS rn
     FROM CollisionWithCutoff cwc
-    JOIN ecrdba.cl_status_history csh 
-        ON cwc.collision_id = csh.collision_id 
+    JOIN ecrdba.cl_status_history csh
+        ON cwc.collision_id = csh.collision_id
         AND TO_DATE(csh.EFFECTIVE_DATE, 'YY-MM-DD') <= cwc.cutoff_end_date
     WHERE TO_DATE(csh.CREATED_TIMESTAMP, 'YY-MM-DD') <= cwc.cutoff_end_date
 )
-SELECT 
-    cwc.collision_id, 
+SELECT
+    cwc.collision_id,
     cwc.case_year,
     cwc.cutoff_end_date,
     csoc.COLL_STATUS_TYPE_ID,
@@ -71,15 +71,15 @@ SELECT
     c.case_nbr,
     c.occurence_timestamp,
     c.reported_timestamp,
-    CASE 
+    CASE
         WHEN csoc.COLL_STATUS_TYPE_ID = 220 THEN 1 -- 220 as upload pending
         WHEN csoc.COLL_STATUS_TYPE_ID = 221 THEN 1 -- 221 as uploaded
         ELSE 0
-    END AS cutoff_upload_pending_flag
+    END AS valid_at_cutoff_flag
 FROM CollisionStatusOnCutoff csoc
-JOIN CollisionWithCutoff cwc 
+JOIN CollisionWithCutoff cwc
     ON csoc.collision_id = cwc.collision_id
-JOIN ecrdba.collisions c 
+JOIN ecrdba.collisions c
     ON csoc.collision_id = c.id
 WHERE csoc.rn = 1
 ORDER BY cwc.collision_id
