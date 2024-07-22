@@ -1,3 +1,5 @@
+-- Save the output of this .sql to "extract_ecollision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_YYYY-MM-DD.csv" in the "ecollision-analytics-assessment" directory
+
 WITH CollisionCutoffDates AS (
     -- collision cut-off date is used to set a maximum time boundary for a case to be considered "valid" when they have "upload pending" status; reference = https://ecollisionanalytics-pappa1:14501/eCollisionAnalytics_prd/app/administration/EditingCutoffDatesList.seam?cid=171&conversationPropagation=end
     SELECT 2024 AS case_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
@@ -81,5 +83,7 @@ JOIN CollisionWithCutoff cwc
     ON csoc.collision_id = cwc.collision_id
 JOIN ecrdba.collisions c
     ON csoc.collision_id = c.id
-WHERE csoc.rn = 1
+WHERE 1=1
+      and csoc.rn = 1
+      --and c.case_nbr = '802189'
 ORDER BY cwc.collision_id

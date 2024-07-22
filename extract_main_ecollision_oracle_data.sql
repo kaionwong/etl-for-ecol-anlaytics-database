@@ -1,3 +1,5 @@
+-- Save the output of this .sql to "main_extract_ecollision_oracle_data_2000-2024_snapshot_from_YYYY-MM-DD.csv" in the "ecollision-analytics-assessment" directory
+
 WITH MainTable AS (
     SELECT
         ID as Collision_ID,
