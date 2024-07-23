@@ -25,114 +25,86 @@ WITH CollisionCutoffDates AS (
     SELECT 2004 AS case_year, TO_DATE('2005-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL
 ),
 CollisionEarliestDate AS (
-  -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision an preset cut-off date
-  SELECT
-    collision_id,
-    TO_CHAR(MIN(created_timestamp), 'YYYY-MM-DD') AS earliest_created_date
-  FROM
-    ecrdba.cl_status_history
-  GROUP BY
-    collision_id
+    -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision an preset cut-off date
+    SELECT
+        collision_id,
+        TO_CHAR(MIN(created_timestamp), 'YYYY-MM-DD') AS earliest_created_date
+    FROM ecrdba.cl_status_history
+    GROUP BY collision_id
 ),
 CollisionCaseYear AS (
-  SELECT
-    ced.collision_id,
-    -- EXTRACT(YEAR FROM ced.earliest_created_date) AS case_year,
-    EXTRACT(
-      YEAR
-      FROM
-        TO_DATE(ced.earliest_created_date, 'YYYY-MM-DD')
-    ) AS case_year,
-    ced.earliest_created_date
-  FROM
-    CollisionEarliestDate ced
+    SELECT
+        ced.collision_id,
+        -- EXTRACT(YEAR FROM ced.earliest_created_date) AS case_year,
+        EXTRACT(YEAR FROM TO_DATE(ced.earliest_created_date, 'YYYY-MM-DD')) AS case_year,
+        ced.earliest_created_date
+    FROM CollisionEarliestDate ced
 ),
 CollisionWithCutoff AS (
-  SELECT
-    ccy.collision_id,
-    ccy.case_year,
-    ccd.cutoff_end_date
-  FROM
-    CollisionCaseYear ccy
+    SELECT
+        ccy.collision_id,
+        ccy.case_year,
+        ccd.cutoff_end_date
+    FROM CollisionCaseYear ccy
     JOIN CollisionCutoffDates ccd ON ccy.case_year = ccd.case_year
 ),
 CollisionStatusOnCutoff AS (
-  SELECT
-    cwc.collision_id,
-    cwc.case_year,
-    cwc.cutoff_end_date,
-    csh.COLL_STATUS_TYPE_ID,
-    csh.EFFECTIVE_DATE,
-    ROW_NUMBER() OVER (
-      PARTITION BY cwc.collision_id
-      ORDER BY
-        csh.EFFECTIVE_DATE DESC,
-        csh.COLL_STATUS_TYPE_ID DESC
-    ) AS rn
-  FROM
-    CollisionWithCutoff cwc
-    JOIN ecrdba.cl_status_history csh ON cwc.collision_id = csh.collision_id
-    AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
-  WHERE
-    TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+    SELECT
+        cwc.collision_id,
+        cwc.case_year,
+        cwc.cutoff_end_date,
+        csh.COLL_STATUS_TYPE_ID,
+        csh.EFFECTIVE_DATE,
+        ROW_NUMBER() OVER (
+            PARTITION BY cwc.collision_id
+            ORDER BY csh.EFFECTIVE_DATE DESC, csh.COLL_STATUS_TYPE_ID DESC
+        ) AS rn
+    FROM CollisionWithCutoff cwc
+    JOIN ecrdba.cl_status_history csh
+        ON cwc.collision_id = csh.collision_id
+        AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+    WHERE TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
 ),
 CollisionStatusOnCutoffFiltered AS (
-  select
-    *
-  from
-    CollisionStatusOnCutoff
-  where
-    effective_date <= cutoff_end_date
+    select
+        *
+    from CollisionStatusOnCutoff
+    where effective_date <= cutoff_end_date
 ),
+
 CollisionStatusOnCutoffFilteredTwice as (
-  select
+select 
     collision_id,
     case_year,
     cutoff_end_date,
     coll_status_type_id,
     effective_date,
     rn,
-    row_number() over (
-      partition by collision_id
-      order by
-        rn asc
-    ) as rn2
-  from
-    CollisionStatusOnCutoffFiltered
+    row_number() over (partition by collision_id order by rn asc) as rn2
+from CollisionStatusOnCutoffFiltered
 ),
 CollisionStatusOnCutoffFilteredThrice as (
-  select
-    *
-  from
-    CollisionStatusOnCutoffFilteredTwice
-  where
-    rn2 = 1
-)
+select * from CollisionStatusOnCutoffFilteredTwice
+where rn2 = 1)
+
 select
-  csoc.collision_id,
-  csoc.case_year,
-  csoc.cutoff_end_date,
-  csoc.COLL_STATUS_TYPE_ID,
-  csoc.EFFECTIVE_DATE,
-  c.case_nbr,
-  c.occurence_timestamp,
-  c.reported_timestamp,
-  CASE
-    WHEN csoc.COLL_STATUS_TYPE_ID = 220 THEN 1 -- 220 as upload pending
-    WHEN csoc.COLL_STATUS_TYPE_ID = 221 THEN 1 -- 221 as uploaded
-    ELSE 0
-  END AS valid_at_cutoff_flag
-from
-  CollisionStatusOnCutoffFilteredThrice csoc
-  left join ecrdba.collisions c on csoc.collision_id = c.id
-  
-  -- Testing below:
-  where 1=1
-    --and COLL_STATUS_TYPE_ID = 221
-    --and case_nbr = '13'
-  
-order by
-  csoc.collision_id
+    csoc.collision_id,
+    csoc.case_year,
+    csoc.cutoff_end_date,
+    csoc.COLL_STATUS_TYPE_ID,
+    csoc.EFFECTIVE_DATE,
+    c.case_nbr,
+    c.occurence_timestamp,
+    c.reported_timestamp,
+    CASE
+        WHEN csoc.COLL_STATUS_TYPE_ID = 220 THEN 1 -- 220 as upload pending
+        WHEN csoc.COLL_STATUS_TYPE_ID = 221 THEN 1 -- 221 as uploaded
+        ELSE 0
+    END AS valid_at_cutoff_flag
+from CollisionStatusOnCutoffFilteredThrice csoc
+left join ecrdba.collisions c
+    on csoc.collision_id = c.id
+order by csoc.collision_id
 
 -- Testing below:
 -- ORDER BY VALID_AT_CUTOFF_FLAG desc

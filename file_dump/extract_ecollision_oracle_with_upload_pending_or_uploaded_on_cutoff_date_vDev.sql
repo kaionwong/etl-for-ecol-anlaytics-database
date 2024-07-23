@@ -72,9 +72,9 @@ CollisionStatusOnCutoff AS (
   FROM
     CollisionWithCutoff cwc
     JOIN ecrdba.cl_status_history csh ON cwc.collision_id = csh.collision_id
-    AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
-  WHERE
-    TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+    --AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+  --WHERE
+    --TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
 ),
 CollisionStatusOnCutoffFiltered AS (
   select
@@ -127,9 +127,8 @@ from
   left join ecrdba.collisions c on csoc.collision_id = c.id
   
   -- Testing below:
-  where 1=1
-    --and COLL_STATUS_TYPE_ID = 221
-    --and case_nbr = '13'
+--  where 1=1
+--    and COLL_STATUS_TYPE_ID = 221
   
 order by
   csoc.collision_id

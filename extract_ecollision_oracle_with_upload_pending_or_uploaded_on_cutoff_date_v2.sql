@@ -127,9 +127,8 @@ from
   left join ecrdba.collisions c on csoc.collision_id = c.id
   
   -- Testing below:
-  where 1=1
-    --and COLL_STATUS_TYPE_ID = 221
-    --and case_nbr = '13'
+--  where 1=1
+--    and COLL_STATUS_TYPE_ID = 221
   
 order by
   csoc.collision_id

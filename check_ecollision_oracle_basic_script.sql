@@ -19,4 +19,5 @@
 ------ Pull all audit table for eCollision for a collision case
 select created_timestamp
 from ECRDBA.Au_Collisions
-where Case_nbr = '8571288'
+where Case_nbr = '2'
+order by created_timestamp
