@@ -2,27 +2,27 @@
 
 WITH CollisionCutoffDates AS (
     -- collision cut-off date is used to set a maximum time boundary for a case to be considered "valid" when they have "upload pending/uploaded" status; reference = https://ecollisionanalytics-pappa1:14501/eCollisionAnalytics_prd/app/administration/EditingCutoffDatesList.seam?cid=171&conversationPropagation=end
-    SELECT 2024 AS case_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2023 AS case_year, TO_DATE('2025-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2022 AS case_year, TO_DATE('2024-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2021 AS case_year, TO_DATE('2023-02-06', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2020 AS case_year, TO_DATE('2022-06-15', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2019 AS case_year, TO_DATE('2021-10-23', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2018 AS case_year, TO_DATE('2020-01-23', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2017 AS case_year, TO_DATE('2019-02-11', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2016 AS case_year, TO_DATE('2018-01-26', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2015 AS case_year, TO_DATE('2016-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2014 AS case_year, TO_DATE('2015-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2013 AS case_year, TO_DATE('2014-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2012 AS case_year, TO_DATE('2013-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2011 AS case_year, TO_DATE('2012-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2010 AS case_year, TO_DATE('2011-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2009 AS case_year, TO_DATE('2010-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2008 AS case_year, TO_DATE('2009-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2007 AS case_year, TO_DATE('2008-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2006 AS case_year, TO_DATE('2007-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2005 AS case_year, TO_DATE('2006-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
-    SELECT 2004 AS case_year, TO_DATE('2005-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL
+    SELECT 2024 AS created_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2023 AS created_year, TO_DATE('2025-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2022 AS created_year, TO_DATE('2024-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2021 AS created_year, TO_DATE('2023-02-06', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2020 AS created_year, TO_DATE('2022-06-15', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2019 AS created_year, TO_DATE('2021-10-23', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2018 AS created_year, TO_DATE('2020-01-23', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2017 AS created_year, TO_DATE('2019-02-11', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2016 AS created_year, TO_DATE('2018-01-26', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2015 AS created_year, TO_DATE('2016-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2014 AS created_year, TO_DATE('2015-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2013 AS created_year, TO_DATE('2014-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2012 AS created_year, TO_DATE('2013-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2011 AS created_year, TO_DATE('2012-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2010 AS created_year, TO_DATE('2011-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2009 AS created_year, TO_DATE('2010-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2008 AS created_year, TO_DATE('2009-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2007 AS created_year, TO_DATE('2008-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2006 AS created_year, TO_DATE('2007-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2005 AS created_year, TO_DATE('2006-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
+    SELECT 2004 AS created_year, TO_DATE('2005-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL
 ),
 CollisionEarliestDate AS (
   -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision an preset cut-off date
@@ -37,12 +37,11 @@ CollisionEarliestDate AS (
 CollisionCaseYear AS (
   SELECT
     ced.collision_id,
-    -- EXTRACT(YEAR FROM ced.earliest_created_date) AS case_year,
     EXTRACT(
       YEAR
       FROM
         TO_DATE(ced.earliest_created_date, 'YYYY-MM-DD')
-    ) AS case_year,
+    ) AS created_year,
     ced.earliest_created_date
   FROM
     CollisionEarliestDate ced
@@ -50,16 +49,16 @@ CollisionCaseYear AS (
 CollisionWithCutoff AS (
   SELECT
     ccy.collision_id,
-    ccy.case_year,
+    ccy.created_year,
     ccd.cutoff_end_date
   FROM
     CollisionCaseYear ccy
-    JOIN CollisionCutoffDates ccd ON ccy.case_year = ccd.case_year
+    JOIN CollisionCutoffDates ccd ON ccy.created_year = ccd.created_year
 ),
 CollisionStatusOnCutoff AS (
   SELECT
     cwc.collision_id,
-    cwc.case_year,
+    cwc.created_year,
     cwc.cutoff_end_date,
     csh.COLL_STATUS_TYPE_ID,
     csh.EFFECTIVE_DATE,
@@ -87,7 +86,7 @@ CollisionStatusOnCutoffFiltered AS (
 CollisionStatusOnCutoffFilteredTwice as (
   select
     collision_id,
-    case_year,
+    created_year,
     cutoff_end_date,
     coll_status_type_id,
     effective_date,
@@ -110,7 +109,8 @@ CollisionStatusOnCutoffFilteredThrice as (
 )
 select
   csoc.collision_id,
-  csoc.case_year,
+  csoc.created_year,
+  EXTRACT(YEAR FROM TO_DATE(c.OCCURENCE_TIMESTAMP, 'YY-MM-DD')) AS case_year,
   csoc.cutoff_end_date,
   csoc.COLL_STATUS_TYPE_ID,
   csoc.EFFECTIVE_DATE,
