@@ -7,6 +7,7 @@
 
 import pandas as pd
 from datetime import datetime
+import numpy as np
 
 folder_path = './output/'
 start_date_str = '2000-01-01'
@@ -25,6 +26,9 @@ df_oracle = pd.read_csv(oracle_file_path)
 df_oracle['CASE_NBR'] = df_oracle['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 
+df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
+df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
+
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
     # Convert date_var_used_for_df_oracle into a date format that can be compared
@@ -38,6 +42,9 @@ if start_date_str is not None and end_date_str is not None:
 analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-07-23.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
+
+df_analytics = df_analytics.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
+df_analytics['CASE_YEAR'] = df_analytics['CASE_YEAR'].astype(int)
 
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
@@ -61,15 +68,15 @@ if start_date_str is not None and end_date_str is not None:
 # .. case_number = 136571 exists in eCollision Oracle, and it is a 2012 collision. The same case_number exists in eCollision Analytics, but
 # .. it is a 2001 case, thus the supposed 2012 case from Oracle is still missing in eCollision Analytics.
 # Generate the lists
-unique_mask = ~df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
-unique_case_nbr_list = df_oracle.loc[unique_mask, 'CASE_NBR'].tolist()
-common_mask = df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
-common_case_nbr_list = df_oracle.loc[common_mask, 'CASE_NBR'].tolist()
-df_oracle_discrepancy1 = df_oracle[df_oracle['CASE_NBR'].isin(unique_case_nbr_list)]
+unique_mask1 = ~df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
+unique_case_nbr_list1 = df_oracle.loc[unique_mask1, 'CASE_NBR'].tolist()
+common_mask1 = df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
+common_case_nbr_list1 = df_oracle.loc[common_mask1, 'CASE_NBR'].tolist()
+df_oracle_discrepancy1 = df_oracle[df_oracle['CASE_NBR'].isin(unique_case_nbr_list1)]
 
 # Output the lists
-print(f"Method #1: Unique CASE_NBR in df_oracle (not in df_analytics), n={len(unique_case_nbr_list)}:", unique_case_nbr_list)
-print(f"Method #1: Common CASE_NBR in both df_oracle and df_analytics, n={len(common_case_nbr_list)}:", common_case_nbr_list)
+print(f"Method #1: Unique CASE_NBR in df_oracle (not in df_analytics), n={len(unique_case_nbr_list1)}:", unique_case_nbr_list1)
+print(f"Method #1: Common CASE_NBR in both df_oracle and df_analytics, n={len(common_case_nbr_list1)}:", common_case_nbr_list1)
 print('Method #1: Discrepancy volume by year:', df_oracle_discrepancy1['CASE_YEAR'].value_counts().sort_index())
 
 # Save the list
@@ -81,26 +88,26 @@ if save_switch:
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy1.to_csv(output_file_path, index=False, header=True)
 
-# Output discrepancies - #2 this compares both the case_number and case_year in both dataframes
-# .. missing is defined as the case not in eCollision Analytics if either case_number and/or case_year is missing when
+# Output discrepancies - #2 this compares both the case_number and collision_id in both dataframes
+# .. missing is defined as the case not in eCollision Analytics if either case_number and/or collision_id is missing when
 # .. comparing the two dataframes
 
 # Create composite keys
-df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
-df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
+df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['COLLISION_ID'].astype(str)
+df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['COLLISION_ID'].astype(str)
 
 # Find unique and common cases based on the composite key
-unique_mask = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
-unique_case_key_list = df_oracle.loc[unique_mask, 'CASE_KEY'].tolist()
-common_mask = df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
-common_case_key_list = df_oracle.loc[common_mask, 'CASE_KEY'].tolist()
+unique_mask2 = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
+unique_case_key_list2 = df_oracle.loc[unique_mask2, 'CASE_KEY'].tolist()
+common_mask2 = df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
+common_case_key_list2 = df_oracle.loc[common_mask2, 'CASE_KEY'].tolist()
 
 # Filter for discrepancies
-df_oracle_discrepancy2 = df_oracle[df_oracle['CASE_KEY'].isin(unique_case_key_list)]
+df_oracle_discrepancy2 = df_oracle[df_oracle['CASE_KEY'].isin(unique_case_key_list2)]
 
 # Output the lists
-print(f"Method #2: Unique CASE_KEY in df_oracle (not in df_analytics), n={len(unique_case_key_list)}:", unique_case_key_list)
-print(f"Method #2: Common CASE_KEY in both df_oracle and df_analytics, n={len(common_case_key_list)}:", common_case_key_list)
+print(f"Method #2: Unique CASE_KEY in df_oracle (not in df_analytics), n={len(unique_case_key_list2)}:", unique_case_key_list2)
+print(f"Method #2: Common CASE_KEY in both df_oracle and df_analytics, n={len(common_case_key_list2)}:", common_case_key_list2)
 print('Method #2: Discrepancy volume by year:', df_oracle_discrepancy2['CASE_YEAR'].value_counts().sort_index())
 
 # Save the list if save_switch is True
