@@ -10,8 +10,8 @@ from datetime import datetime
 import numpy as np
 
 folder_path = './output/'
-start_date_str = '2000-01-01'
-end_date_str = '2024-08-02' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+start_date_str = '2019-01-01'
+end_date_str = '2019-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 1 # if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
 save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
@@ -131,3 +131,5 @@ print(f'IMPORTANT WARNING!!! Caveat: The last year will be overestimation due to
       df_oracle and df_analytics, it includes this last date for checking, but since it takes a day or a weekend (if the changes occurs on \
       Friday), so the "discrepancy" or missing cases in eCollision Analytics for the last day is simply due to time required to sync from eCollision \
       Oracle to eCollision Analytics.')
+print(f'IMPORTANT WARNING!!! "mMissing" in eCollision Oracle db is typically not real missing, but due to how case_year is calculated, it may be \
+    recorded as a different adjacent year as compared to eCollision Analytics.')
