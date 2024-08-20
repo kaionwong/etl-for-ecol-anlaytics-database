@@ -11,14 +11,14 @@ import numpy as np
 
 folder_path = './output/'
 start_date_str = '2000-01-01'
-end_date_str = '2024-07-15' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
-buffer_days = 3 # if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
-save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
+end_date_str = '2024-08-02' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+buffer_days = 1 # if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
+save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-07-23.csv'
+oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-06.csv'
 oracle_file_path = oracle_filename
 df_oracle = pd.read_csv(oracle_file_path)
 
@@ -39,7 +39,7 @@ if start_date_str is not None and end_date_str is not None:
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-07-23.csv'
+analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-06.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 
@@ -74,10 +74,16 @@ common_mask1 = df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
 common_case_nbr_list1 = df_oracle.loc[common_mask1, 'CASE_NBR'].tolist()
 df_oracle_discrepancy1 = df_oracle[df_oracle['CASE_NBR'].isin(unique_case_nbr_list1)]
 
+unique_mask11 = ~df_analytics['CASE_NBR'].isin(df_oracle['CASE_NBR'])
+unique_case_nbr_list11 = df_analytics.loc[unique_mask11, 'CASE_NBR'].tolist()
+df_analytics_discrepancy1 = df_analytics[df_analytics['CASE_NBR'].isin(unique_case_nbr_list11)]
+
 # Output the lists
 print(f"Method #1: Unique CASE_NBR in df_oracle (not in df_analytics), n={len(unique_case_nbr_list1)}:", unique_case_nbr_list1)
+print(f"Method #1: Unique CASE_NBR in df_analytics (not in df_oracle), n={len(unique_case_nbr_list11)}:", unique_case_nbr_list11)
 print(f"Method #1: Common CASE_NBR in both df_oracle and df_analytics, n={len(common_case_nbr_list1)}:", common_case_nbr_list1)
-print('Method #1: Discrepancy volume by year:', df_oracle_discrepancy1['CASE_YEAR'].value_counts().sort_index())
+print('Method #1: Discrepancy (missing in Analytics) volume by year:', df_oracle_discrepancy1['CASE_YEAR'].value_counts().sort_index())
+print('Method #1: Discrepancy (missing in Oracle) volume by year:', df_analytics_discrepancy1['CASE_YEAR'].value_counts().sort_index())
 
 # Save the list
 now = datetime.now()
@@ -101,14 +107,18 @@ unique_mask2 = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
 unique_case_key_list2 = df_oracle.loc[unique_mask2, 'CASE_KEY'].tolist()
 common_mask2 = df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
 common_case_key_list2 = df_oracle.loc[common_mask2, 'CASE_KEY'].tolist()
-
-# Filter for discrepancies
 df_oracle_discrepancy2 = df_oracle[df_oracle['CASE_KEY'].isin(unique_case_key_list2)]
+
+unique_mask22 = ~df_analytics['CASE_KEY'].isin(df_oracle['CASE_KEY'])
+unique_case_key_list22 = df_analytics.loc[unique_mask22, 'CASE_KEY'].tolist()
+df_analytics_discrepancy2 = df_analytics[df_analytics['CASE_KEY'].isin(unique_case_key_list22)]
 
 # Output the lists
 print(f"Method #2: Unique CASE_KEY in df_oracle (not in df_analytics), n={len(unique_case_key_list2)}:", unique_case_key_list2)
+print(f"Method #2: Unique CASE_KEY in df_analytics (not in df_oracle), n={len(unique_case_key_list22)}:", unique_case_key_list22)
 print(f"Method #2: Common CASE_KEY in both df_oracle and df_analytics, n={len(common_case_key_list2)}:", common_case_key_list2)
-print('Method #2: Discrepancy volume by year:', df_oracle_discrepancy2['CASE_YEAR'].value_counts().sort_index())
+print('Method #2: Discrepancy (missing in Analytics) volume by year:', df_oracle_discrepancy2['CASE_YEAR'].value_counts().sort_index())
+print('Method #2: Discrepancy (missing in Oracle) volume by year:', df_analytics_discrepancy2['CASE_YEAR'].value_counts().sort_index())
 
 # Save the list if save_switch is True
 if save_switch:    
