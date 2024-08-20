@@ -355,7 +355,7 @@ MainTable as (
         
         WHERE 1=1
             AND c.CASE_YEAR between 2022 and 2023
-            AND lower(c.POLICE_SERVICE_CODE) in ('eps') or lower(c.LOC_DESC) like '%edmonton%'
+            AND lower(c.POLICE_SERVICE_CODE) in ('cps') or lower(c.LOC_DESC) like '%calgary%'
 --            AND c.Case_Year=2016
 --            AND ((c.POLICE_SERVICE_CODE in ('1624','1631') AND c.LOC_IN_CITY_FLAG IN ('0'))
 --            OR (c.POLICE_SERVICE_CODE in ('1624','1631') AND c.LOC_IN_CITY_FLAG IN ('1') AND c.LOC_DESC like '%GEON%'))
