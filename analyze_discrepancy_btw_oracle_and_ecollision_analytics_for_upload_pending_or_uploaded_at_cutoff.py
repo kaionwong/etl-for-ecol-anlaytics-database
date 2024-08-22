@@ -12,9 +12,13 @@ import re
 
 # Helper function
 def clean_pfn_file_nbr(value):
+    if pd.isna(value):  # Handle NaN or None values
+        return np.nan
+    
+    # Ensure the value is a string
+    value = str(value)
     # Remove any non-alphanumeric characters
     value = re.sub(r'[^a-zA-Z0-9]', '', value)
-    
     # Remove leading zeros
     value = value.lstrip('0')
     
@@ -43,8 +47,12 @@ df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 
 df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
-df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
+try:
+    df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
+except Exception as e:
+    print(e)
+    
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
     # Convert date_var_used_for_df_oracle into a date format that can be compared
@@ -121,12 +129,12 @@ if save_switch:
 # df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['COLLISION_ID'].astype(str)
 
 # Method #2 of 'CASE_KEY' definition with CASE_NBR and CASE_YEAR (this returns the exact same result as Method #1)
-# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
-# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
+df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
+df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
 
 # Method #3 of 'CASE_KEY' definition with CASE_NBR and PFN_FILE_NBR_CLEANED
-df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['PFN_FILE_NBR_CLEANED'].astype(str)
-df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['PFN_FILE_NBR_CLEANED'].astype(str)
+# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['PFN_FILE_NBR_CLEANED'].astype(str)
+# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['PFN_FILE_NBR_CLEANED'].astype(str)
 
 # Find unique and common cases based on the composite key
 unique_mask2 = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
