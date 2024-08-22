@@ -115,6 +115,7 @@ select
   csoc.COLL_STATUS_TYPE_ID,
   csoc.EFFECTIVE_DATE,
   c.case_nbr,
+  c.PFN_FILE_NBR,
   c.occurence_timestamp,
   c.reported_timestamp,
   CASE

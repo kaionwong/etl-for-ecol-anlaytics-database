@@ -8,7 +8,22 @@
 import pandas as pd
 from datetime import datetime
 import numpy as np
+import re
 
+# Helper function
+def clean_pfn_file_nbr(value):
+    # Remove any non-alphanumeric characters
+    value = re.sub(r'[^a-zA-Z0-9]', '', value)
+    
+    # Remove leading zeros
+    value = value.lstrip('0')
+    
+    # Convert to int if it's a numeric value, otherwise keep as string
+    if value.isdigit():
+        return int(value)
+    return value
+
+# Main code
 folder_path = './output/'
 start_date_str = '2019-01-01'
 end_date_str = '2019-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
@@ -28,6 +43,7 @@ df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 
 df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
+df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
@@ -45,6 +61,7 @@ df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ',
 
 df_analytics = df_analytics.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_analytics['CASE_YEAR'] = df_analytics['CASE_YEAR'].astype(int)
+df_analytics['PFN_FILE_NBR_CLEANED'] = df_analytics['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
@@ -98,9 +115,18 @@ if save_switch:
 # .. missing is defined as the case not in eCollision Analytics if either case_number and/or collision_id is missing when
 # .. comparing the two dataframes
 
-# Create composite keys
-df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['COLLISION_ID'].astype(str)
-df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['COLLISION_ID'].astype(str)
+# Create composite keys; options below
+# Method #1 of 'CASE_KEY' definition with CASE_NBR and COLLISION_ID
+# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['COLLISION_ID'].astype(str)
+# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['COLLISION_ID'].astype(str)
+
+# Method #2 of 'CASE_KEY' definition with CASE_NBR and CASE_YEAR (this returns the exact same result as Method #1)
+# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
+# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
+
+# Method #3 of 'CASE_KEY' definition with CASE_NBR and PFN_FILE_NBR_CLEANED
+df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['PFN_FILE_NBR_CLEANED'].astype(str)
+df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['PFN_FILE_NBR_CLEANED'].astype(str)
 
 # Find unique and common cases based on the composite key
 unique_mask2 = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])

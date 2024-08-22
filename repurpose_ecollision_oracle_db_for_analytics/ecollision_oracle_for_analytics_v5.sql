@@ -151,6 +151,9 @@ MainTable as (
     select 
         c.ID COLLISION_ID
         ,c.CASE_NBR
+        ,c.FORM_CASE_NBR
+        ,c.PFN_FILE_NBR
+        ,c.FILE_ID
         ,c.CASE_YEAR
         ,c.SEVERITY_OF_COLLISION_ID
         ,CASE WHEN c.SEVERITY_OF_COLLISION_ID=4 THEN 'Fatal'
@@ -158,6 +161,7 @@ MainTable as (
 			WHEN c.SEVERITY_OF_COLLISION_ID=6 THEN 'Property Damage'
         END COLLISION_SEVERITY
         ,c.LOC_IN_CITY_FLAG
+        ,c.POLICE_SERVICE_CODE
         ,c.LOC_DESC
         ,c.LOC_HWY_NBR
         ,plot.ROAD_ID -- [] need checking/debugging
@@ -352,16 +356,17 @@ MainTable as (
         LEFT JOIN ECRDBA.CODE_TYPE_VALUES s on s.ID=par.SAFETY_EQUIPMENT_ID
         LEFT JOIN ECRDBA.CODE_TYPE_VALUES sub on sub.ID=plot.COLLISION_SUB_TYPE_ID
         LEFT JOIN ECRDBA.CODE_TYPE_VALUES loc on loc.ID=c.COLLISION_LOCATION_ID
-        
+
         WHERE 1=1
-            AND c.CASE_YEAR between 2022 and 2023
-            AND lower(c.POLICE_SERVICE_CODE) in ('cps') or lower(c.LOC_DESC) like '%calgary%'
+            AND CASE_YEAR = 2021
+            AND (lower(POLICE_SERVICE_CODE) in ('cps') or lower(LOC_DESC) like '%calgary%')
 --            AND c.Case_Year=2016
 --            AND ((c.POLICE_SERVICE_CODE in ('1624','1631') AND c.LOC_IN_CITY_FLAG IN ('0'))
 --            OR (c.POLICE_SERVICE_CODE in ('1624','1631') AND c.LOC_IN_CITY_FLAG IN ('1') AND c.LOC_DESC like '%GEON%'))
 --             AND c.LOC_IN_CITY_FLAG IN ('1','0')
 --             AND c.LOC_DESC like 'STURGEON%'
 --             AND (c.LOC_DESC like 'CCHRANE%' OR c.LOC_DESC like 'COC%')
+
 )
 
 -- Output setting:
@@ -370,134 +375,137 @@ MainTable as (
 --from MainTable
 
 -- Output option #1:
---select
---    *
---from MainTable
+select
+    *
+from MainTable
+where 1=1
+    and Collision_Severity <> 'Fatal'
 --ORDER BY Collision_ID
+order by CASE_NBR
 
 -- Output option #2:
-	SELECT CASE_YEAR
-		  ,COLLISION_SEVERITY as Category
-		  ,COUNT(DISTINCT Collision_ID) COUNT
-		  ,'Collision Severity' as TableName
-		  ,1 as TableOrder
-	FROM MainTable 
-	WHERE 1=1
-	GROUP BY CASE_YEAR, COLLISION_SEVERITY
-	UNION
-	SELECT CASE_YEAR
-		  ,INJURY_Severity
-		  ,COUNT(DISTINCT Party_ID) COUNT
-		  ,'Injury Severity' as TableName
-		  ,2 as TableOrder
-	FROM MainTable 
-	WHERE 1=1
-	AND INJURY_SEVERITY is NOT NULL
-	AND INJURY_SEVERITY Not in ('None','Unknown')
-	GROUP BY CASE_YEAR,INJURY_Severity
-	UNION
-	SELECT CASE_YEAR
-		  ,'Unsafe Speed' as Category
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Unsafe Speed' as TableName
-		  ,3 as TableOrder
-	FROM MainTable 
-	WHERE 1=1
-	AND UNSAFE_SPEED_ID=231
-	AND COLLISION_SEVERITY <>'Fatal'
-	AND Object_type in ('Driver','Motorcyclist','Other Vehicle')
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,'Intersections' as Category
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Intersections' as TableName
-		  ,4 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND TRAFFIC_CTRL_DEVICE_ID in (201,202,203,204)
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,'Weather-Related' as Category
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Weather-Related' as TableName
-		  ,5 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND ENVIRONMENTAL_CONDITION_ID in (50,51,52,53,54,55)		
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,'Surface Condition' as Category
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Surface Condition' as TableName
-		  ,6 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND SURFACE_COND_ID in (58,59,60,61,62)		
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,'Animal-Related' as Category
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Animal-Related' as TableName
-		  ,7 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND OBJECT_TYPE='Animal'	
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,'Drivers Performing Improper Actions' as Category
-		  ,COUNT(Distinct Party_ID) as Total
-		  ,'Drivers Performing Improper Actions' as TableName
-		  ,8 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND DRIVER_ACTION_ID NOT IN (155,161,171)		--155 Driving Properly 161 Parked Vehicle 171 Unknown
-	GROUP BY CASE_YEAR
-	UNION
-	SELECT CASE_YEAR
-		  ,Seasons
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Seasons' as TableName
-		  ,8 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	GROUP BY CASE_YEAR,Seasons
-	UNION
-	SELECT CASE_YEAR
-		  ,Time_Group
-		  ,COUNT(Distinct Collision_ID) as Total
-		  ,'Time' as TableName
-		  ,9 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	GROUP BY CASE_YEAR,Time_Group
-	UNION
-	SELECT CASE_YEAR
-		  ,Sex
-		  ,COUNT(Distinct Party_ID) as Total
-		  ,'Sex' as TableName
-		  ,10 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND INJURY_Category in ('Injury','Fatal')
-	GROUP BY CASE_YEAR,Sex
-	UNION
-	SELECT CASE_YEAR
-		  ,Sex
-		  ,COUNT(Distinct Party_ID) as Total
-		  ,'Not Wearing Seatbelt' as TableName
-		  ,11 as TableOrder
-	FROM MainTable
-	WHERE 1=1
-	AND Unbelted_Flag='Y'
-	AND INJURY_Category in ('Injury','Fatal')
-	GROUP BY CASE_YEAR,Sex
-	ORDER BY 1,5,2
-
-
-
-
+--	SELECT CASE_YEAR
+--		  ,COLLISION_SEVERITY as Category
+--		  ,COUNT(DISTINCT Collision_ID) COUNT
+--		  ,'Collision Severity' as TableName
+--		  ,1 as TableOrder
+--	FROM MainTable 
+--	WHERE 1=1
+--	GROUP BY CASE_YEAR, COLLISION_SEVERITY
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,INJURY_Severity
+--		  ,COUNT(DISTINCT Party_ID) COUNT
+--		  ,'Injury Severity' as TableName
+--		  ,2 as TableOrder
+--	FROM MainTable 
+--	WHERE 1=1
+--	AND INJURY_SEVERITY is NOT NULL
+--	AND INJURY_SEVERITY Not in ('None','Unknown')
+--	GROUP BY CASE_YEAR,INJURY_Severity
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Unsafe Speed' as Category
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Unsafe Speed' as TableName
+--		  ,3 as TableOrder
+--	FROM MainTable 
+--	WHERE 1=1
+--	AND UNSAFE_SPEED_ID=231
+--	AND COLLISION_SEVERITY <>'Fatal'
+--	AND Object_type in ('Driver','Motorcyclist','Other Vehicle')
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Intersections' as Category
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Intersections' as TableName
+--		  ,4 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND TRAFFIC_CTRL_DEVICE_ID in (201,202,203,204)
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Weather-Related' as Category
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Weather-Related' as TableName
+--		  ,5 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND ENVIRONMENTAL_CONDITION_ID in (50,51,52,53,54,55)		
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Surface Condition' as Category
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Surface Condition' as TableName
+--		  ,6 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND SURFACE_COND_ID in (58,59,60,61,62)		
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Animal-Related' as Category
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Animal-Related' as TableName
+--		  ,7 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND OBJECT_TYPE='Animal'	
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,'Drivers Performing Improper Actions' as Category
+--		  ,COUNT(Distinct Party_ID) as Total
+--		  ,'Drivers Performing Improper Actions' as TableName
+--		  ,8 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND DRIVER_ACTION_ID NOT IN (155,161,171)		--155 Driving Properly 161 Parked Vehicle 171 Unknown
+--	GROUP BY CASE_YEAR
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,Seasons
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Seasons' as TableName
+--		  ,8 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	GROUP BY CASE_YEAR,Seasons
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,Time_Group
+--		  ,COUNT(Distinct Collision_ID) as Total
+--		  ,'Time' as TableName
+--		  ,9 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	GROUP BY CASE_YEAR,Time_Group
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,Sex
+--		  ,COUNT(Distinct Party_ID) as Total
+--		  ,'Sex' as TableName
+--		  ,10 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND INJURY_Category in ('Injury','Fatal')
+--	GROUP BY CASE_YEAR,Sex
+--	UNION
+--	SELECT CASE_YEAR
+--		  ,Sex
+--		  ,COUNT(Distinct Party_ID) as Total
+--		  ,'Not Wearing Seatbelt' as TableName
+--		  ,11 as TableOrder
+--	FROM MainTable
+--	WHERE 1=1
+--	AND Unbelted_Flag='Y'
+--	AND INJURY_Category in ('Injury','Fatal')
+--	GROUP BY CASE_YEAR,Sex
+--	ORDER BY 1,5,2
+--
+--
+--
+--

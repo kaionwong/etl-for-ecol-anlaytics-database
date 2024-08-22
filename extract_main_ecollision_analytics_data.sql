@@ -1,12 +1,12 @@
 -- Save the output of this .sql to "main_extract_ecollision_analytics_data_2000-2024_snapshot_from_YYYY-MM-DD.csv" in the "ecollision-analytics-assessment" directory
 
-SELECT c.ID [Collision_ID]
-    ,c.[CASE_NBR]
-	  ,c.[CASE_YEAR]
-	  ,c.[FORM_CASE_NBR]
+SELECT c.ID Collision_ID
+      ,c.CASE_NBR
+	  ,c.CASE_YEAR
+	  ,c.FORM_CASE_NBR
 	  ,c.POLICE_SERVICE_CODE
-	  ,c.[SEVERITY_OF_COLLISION_ID]
-	  ,c.[PFN_FILE_NBR]
+	  ,c.SEVERITY_OF_COLLISION_ID
+	  ,c.PFN_FILE_NBR
 	  ,c.OCCURENCE_TIMESTRING
 	  ,c.OCCURENCE_TIMESTAMP
 	  ,c.CREATED_TIMESTAMP
