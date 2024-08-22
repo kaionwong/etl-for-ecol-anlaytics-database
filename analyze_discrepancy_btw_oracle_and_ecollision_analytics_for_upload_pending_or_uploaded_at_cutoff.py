@@ -29,8 +29,8 @@ def clean_pfn_file_nbr(value):
 
 # Main code
 folder_path = './output/'
-start_date_str = '2019-01-01'
-end_date_str = '2019-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+start_date_str = '2018-01-01'
+end_date_str = '2018-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
 save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
@@ -38,22 +38,22 @@ date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TI
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-06.csv'
+oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
 oracle_file_path = oracle_filename
-df_oracle = pd.read_csv(oracle_file_path)
+df_oracle = pd.read_csv(oracle_file_path, encoding='windows-1252')
 
 # Clean and type-set CASE_NBR
 df_oracle['CASE_NBR'] = df_oracle['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 
+# Impute OCCURENCE_TIMESTAMP with REPORTED_TIMESTAMP is OCCURENCE_TIMESTAMP is NaN
+df_oracle['OCCURENCE_TIMESTAMP'].fillna(df_oracle['REPORTED_TIMESTAMP'], inplace=True)
+df_oracle['CASE_YEAR'].fillna(df_oracle['CREATED_YEAR'], inplace=True)
 df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
 
-try:
-    df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
-except Exception as e:
-    print(e)
-    
+df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
+
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
     # Convert date_var_used_for_df_oracle into a date format that can be compared
@@ -64,12 +64,13 @@ if start_date_str is not None and end_date_str is not None:
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-06.csv'
+analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 
 df_analytics = df_analytics.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_analytics['CASE_YEAR'] = df_analytics['CASE_YEAR'].astype(int)
+
 df_analytics['PFN_FILE_NBR_CLEANED'] = df_analytics['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
 # Apply date filter if both dates are provided
