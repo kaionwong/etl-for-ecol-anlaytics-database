@@ -7,6 +7,9 @@ load_dotenv()
 username = os.getenv('ECOLLISION_ORACLE_SQL_USERNAME')
 user_password = os.getenv('ECOLLISION_ORACLE_SQL_PASSWORD')
 
+# control panel
+n_row_to_print = 10
+
 # set up for Oracle SQL db connection
 oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.4.0.24.05\\instantclient_23_4'
 cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
@@ -14,8 +17,6 @@ cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
 db_host = 'ncc-production-qf14q-scan.exacc.ds.gov.ab.ca'
 db_port = 1521
 db_service_name = 'AT12PRD.WORLD'
-
-n_row_to_print = 50
 
 conn_info = {
     'host': db_host,
