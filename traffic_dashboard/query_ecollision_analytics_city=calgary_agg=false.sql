@@ -223,8 +223,8 @@ WHERE 1=1
 -- AND c.LOC_IN_CITY_FLAG<>1
 -- AND (c.LOC_DESC like 'CCHRANE%' OR c.LOC_DESC like 'COC%')
 -- AND lower(c.LOC_DESC) LIKE '%sturg%' AND lower(c.LOC_DESC) LIKE '%count%'
-AND c.CASE_YEAR in (2018, 2019, 2020, 2021, 2022)
-AND (lower(c.POLICE_SERVICE_CODE) in ('EPS') OR lower(c.LOC_DESC) like '%calgary%')
+AND c.CASE_YEAR in (2021)
+AND (lower(c.POLICE_SERVICE_CODE) in ('cps') OR lower(c.LOC_DESC) like '%calgary%')
 )
 
 -- Option #1

@@ -70,6 +70,9 @@ df_edmonton_agg = pd.DataFrame(data_reshaped, columns=header)
 df_edmonton_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
 df_edmonton_agg['CITY'] = 'Edmonton'
 
+# clear variables
+del db, header, data
+
 # connect to eCollision Analytics SQL db, and create df_calgary_agg
 db = DB()
 sql_query_calgary_agg = db.load_query_from_file(sql_query_to_execute_calgary_agg)
@@ -80,7 +83,7 @@ db.close_connection()
 header, data = result_calgary_agg[0], result_calgary_agg[1]
 data_reshaped = np.array(data).reshape(-1, len(header))
 
-df_calgary_agg = pd.DataFrame(data, columns=header)
+df_calgary_agg = pd.DataFrame(data_reshaped, columns=header)
 df_calgary_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
 df_calgary_agg['CITY'] = 'Calgary'
 
