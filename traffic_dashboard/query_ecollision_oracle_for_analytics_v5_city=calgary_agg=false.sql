@@ -358,7 +358,7 @@ MainTable as (
         LEFT JOIN ECRDBA.CODE_TYPE_VALUES loc on loc.ID=c.COLLISION_LOCATION_ID
 
         WHERE 1=1
-            AND CASE_YEAR between 2020 and 2022
+            AND CASE_YEAR between 2018 and 2021
             AND (lower(POLICE_SERVICE_CODE) in ('cps') or lower(LOC_DESC) like '%calgary%')
 --            AND (lower(POLICE_SERVICE_CODE) in ('cps') or lower(LOC_DESC) like '%calgary%')
 --            AND c.SEVERITY_OF_COLLISION_ID=4 -- 4 is fatal

@@ -19,10 +19,10 @@ base_path = 'M:\\SPE\\OTS\\Stats-OTS\\Kai\\git_repo\\ecollision_analytics_assess
 
 # sql_query_to_execute = 'traffic_dashboard/test_query.sql'
 # sql_query_to_execute = f'traffic_dashboard/test_ecollision_oracle_for_analytics_v5_city={query_city}_agg={str(query_agg).lower()}.sql'
-sql_query_to_execute_edmonton_not_agg = os.path.join(base_path, f'test_ecollision_oracle_for_analytics_v5_city=edmonton_agg=false.sql')
-sql_query_to_execute_calgary_not_agg = os.path.join(base_path, f'test_ecollision_oracle_for_analytics_v5_city=calgary_agg=false.sql')
-sql_query_to_execute_edmonton_agg = os.path.join(base_path, f'test_ecollision_oracle_for_analytics_v5_city=edmonton_agg=true.sql')
-sql_query_to_execute_calgary_agg = os.path.join(base_path, f'test_ecollision_oracle_for_analytics_v5_city=calgary_agg=true.sql')
+sql_query_to_execute_edmonton_not_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=edmonton_agg=false.sql')
+sql_query_to_execute_calgary_not_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=calgary_agg=false.sql')
+sql_query_to_execute_edmonton_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=edmonton_agg=true.sql')
+sql_query_to_execute_calgary_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=calgary_agg=true.sql')
 
 # set up for Oracle SQL db connection
 oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.4.0.24.05\\instantclient_23_4'
@@ -95,3 +95,8 @@ df_calgary_agg['CITY'] = 'Calgary'
 # mrege df_edmonton_agg and df_calgary_agg
 df_agg = pd.concat([df_edmonton_agg, df_calgary_agg], ignore_index=True)
 df_agg.reset_index(drop=True, inplace=True)
+
+if __name__ == '__main__':
+    print(df_agg.head())
+    print(df_agg.tail())
+    

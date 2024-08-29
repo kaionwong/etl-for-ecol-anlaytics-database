@@ -8,7 +8,6 @@ eCollision Analytics quality assessment processes
 - confirm by continuously run this current process as if the root cause is removed, less or no erroneously deleted/misisng cases should be found
 
 //////
-
 record the time to save eCollision Oracle extract
 start-time = 4:43pm
 intermediate time = 4:50pm
