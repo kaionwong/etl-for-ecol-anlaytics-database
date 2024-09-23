@@ -120,7 +120,7 @@ now = datetime.now()
 timestamp_str = now.strftime('%Y-%m-%d_%H-%M-%S')
 
 if save_switch:    
-    output_filename = f'method1_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_done_at_{timestamp_str}.csv'
+    output_filename = f'method1_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy1.to_csv(output_file_path, index=False, header=True)
 
@@ -161,7 +161,7 @@ print('Method #2: Discrepancy (missing in Oracle) volume by year:', df_analytics
 
 # Save the list if save_switch is True
 if save_switch:    
-    output_filename = f'method2_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_done_at_{timestamp_str}.csv'
+    output_filename = f'method2_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy2.to_csv(output_file_path, index=False, header=True)
 
