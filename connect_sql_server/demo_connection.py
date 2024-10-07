@@ -11,12 +11,12 @@ user_password = os.getenv('ECOLLISION_ORACLE_SQL_PASSWORD')
 n_row_to_print = 10
 
 # set up for Oracle SQL db connection
-oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.4.0.24.05\\instantclient_23_4'
+oracle_instant_client_dir = 'C:\\Users\\first_name.last_name\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.1.2.33.55\\instantclient_23_8'
 cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
 
-db_host = 'ncc-production-qf14q-scan.exacc.ds.gov.ab.ca'
-db_port = 1521
-db_service_name = 'AT12PRD.WORLD'
+db_host = 'database.hostname'
+db_port = 1234
+db_service_name = 'database.service_name'
 
 conn_info = {
     'host': db_host,
