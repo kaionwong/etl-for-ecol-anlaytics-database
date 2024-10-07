@@ -6,24 +6,23 @@ import os
 load_dotenv()
 username = os.getenv('ECOLLISION_ORACLE_SQL_USERNAME')
 user_password = os.getenv('ECOLLISION_ORACLE_SQL_PASSWORD')
+oracle_host = os.getenv('ECOLLISION_ORACLE_SQL_HOST_NAME')
+oracle_port = os.getenv('ECOLLISION_ORACLE_SQL_PORT')
+oracle_service = os.getenv('ECOLLISION_ORACLE_SQL_SERVICE_NAME')
 
 # control panel
 n_row_to_print = 10
 
 # set up for Oracle SQL db connection
-oracle_instant_client_dir = 'C:\\Users\\first_name.last_name\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.1.2.33.55\\instantclient_23_8'
+oracle_instant_client_dir = os.getenv('ORACLE_INSTANT_CLIENT_DIR')
 cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
 
-db_host = 'database.hostname'
-db_port = 1234
-db_service_name = 'database.service_name'
-
 conn_info = {
-    'host': db_host,
-    'port': db_port,
+    'host': oracle_host,
+    'port': oracle_port,
     'user': username,
     'psw': user_password,
-    'service': db_service_name
+    'service': oracle_service
 }
 
 conn_str = '{user}/{psw}@//{host}:{port}/{service}'.format(**conn_info)

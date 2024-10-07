@@ -7,6 +7,9 @@ import os
 load_dotenv()
 username = os.getenv('ECOLLISION_ORACLE_SQL_USERNAME')
 user_password = os.getenv('ECOLLISION_ORACLE_SQL_PASSWORD')
+oracle_host = os.getenv('ECOLLISION_ORACLE_SQL_HOST_NAME')
+oracle_port = os.getenv('ECOLLISION_ORACLE_SQL_PORT')
+oracle_service = os.getenv('ECOLLISION_ORACLE_SQL_SERVICE_NAME')
 
 # control panel
 n_row_to_print = 1000
@@ -15,7 +18,7 @@ query_agg = False # options: True, False
 print_switch = False
 
 # select the sql query to execute; options below:
-base_path = 'M:\\SPE\\OTS\\Stats-OTS\\Kai\\git_repo\\ecollision_analytics_assessment\\ecollision-analytics-assessment\\traffic_dashboard\\'
+base_path = os.getenv('DEMO_DASHBOARD_BASE_PATH')
 
 # sql_query_to_execute = 'traffic_dashboard/test_query.sql'
 # sql_query_to_execute = f'traffic_dashboard/test_ecollision_oracle_for_analytics_v5_city={query_city}_agg={str(query_agg).lower()}.sql'
@@ -25,19 +28,15 @@ sql_query_to_execute_edmonton_agg = os.path.join(base_path, f'query_ecollision_o
 sql_query_to_execute_calgary_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=calgary_agg=true.sql')
 
 # set up for Oracle SQL db connection
-oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.4.0.24.05\\instantclient_23_4'
+oracle_instant_client_dir = os.getenv('ORACLE_INSTANT_CLIENT_DIR')
 cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
 
-db_host = 'ncc-production-qf14q-scan.exacc.ds.gov.ab.ca'
-db_port = 1521
-db_service_name = 'AT12PRD.WORLD'
-
 conn_info = {
-    'host': db_host,
-    'port': db_port,
+    'host': oracle_host,
+    'port': oracle_port,
     'user': username,
     'psw': user_password,
-    'service': db_service_name
+    'service': oracle_service
 }
 
 conn_str = '{user}/{psw}@//{host}:{port}/{service}'.format(**conn_info)
