@@ -8,16 +8,16 @@ n_row_to_print = 1000
 print_switch = False
 
 # select the sql query to execute; options below:
-base_path = 'M:\\SPE\\OTS\\Stats-OTS\\Kai\\git_repo\\ecollision_analytics_assessment\\ecollision-analytics-assessment\\traffic_dashboard\\'
+base_path = os.getenv('DEMO_DASHBOARD_BASE_PATH')
 
 # sql_query_to_execute
 sql_query_to_execute_test = os.path.join(base_path, f'query_moves_test.sql')
 
 # set up for eCollision Analytics SQL db connection
-db_driver = '{SQL Server Native Client 11.0}'
-db_server = 'C-GOA-SQL-10113'
-db_name = 'OTS_Fiscal'
-db_trusted_connection = 'yes'
+db_driver = os.getenv('MOVES_SQL_DRIVER')
+db_server = os.getenv('MOVES_SQL_SERVER').replace('\\\\', '\\')
+db_name = os.getenv('MOVES_SQL_DATABASE_NAME')
+db_trusted_connection = os.getenv('MOVES_SQL_TRUSTED_CONNECTION')
 
 conn_str = ''
 conn_str += f'Driver={db_driver};'

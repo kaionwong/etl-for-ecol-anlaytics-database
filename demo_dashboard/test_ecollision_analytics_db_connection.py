@@ -10,7 +10,7 @@ query_agg = False # options: True, False
 print_switch = False
 
 # select the sql query to execute; options below:
-base_path = 'M:\\SPE\\OTS\\Stats-OTS\\Kai\\git_repo\\ecollision_analytics_assessment\\ecollision-analytics-assessment\\traffic_dashboard\\'
+base_path = os.getenv('DEMO_DASHBOARD_BASE_PATH')
 
 sql_query_to_execute_edmonton_not_agg = os.path.join(base_path, f'query_ecollision_analytics_city=edmonton_agg=false.sql')
 sql_query_to_execute_calgary_not_agg = os.path.join(base_path, f'query_ecollision_analytics_city=calgary_agg=false.sql')
@@ -19,10 +19,10 @@ sql_query_to_execute_calgary_agg = os.path.join(base_path, f'query_ecollision_an
 sql_query_to_execute_simple_test = os.path.join(base_path, f'query_ecollision_analytics_test.sql')
 
 # set up for eCollision Analytics SQL db connection
-db_driver = '{SQL Server Native Client 11.0}'
-db_server = 'EDM-GOA-SQL-712\\AT51PRD'
-db_name = 'eCollisionAnalytics'
-db_trusted_connection = 'yes'
+db_driver = os.getenv('ECOLLISION_ANALYTICS_SQL_DRIVER')
+db_server = os.getenv('ECOLLISION_ANALYTICS_SQL_SERVER').replace('\\\\', '\\')
+db_name = os.getenv('ECOLLISION_ANALYTICS_SQL_DATABASE_NAME')
+db_trusted_connection = os.getenv('ECOLLISION_ANALYTICS_SQL_TRUSTED_CONNECTION')
 
 conn_str = ''
 conn_str += f'Driver={db_driver};'
