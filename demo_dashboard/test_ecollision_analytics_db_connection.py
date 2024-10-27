@@ -87,7 +87,7 @@ df_calgary_agg = pd.DataFrame(data_reshaped, columns=header)
 df_calgary_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
 df_calgary_agg['CITY'] = 'Calgary'
 
-# mrege df_edmonton_agg and df_calgary_agg
+# merge df_edmonton_agg and df_calgary_agg
 df_agg = pd.concat([df_edmonton_agg, df_calgary_agg], ignore_index=True)
 df_agg.reset_index(drop=True, inplace=True)
 

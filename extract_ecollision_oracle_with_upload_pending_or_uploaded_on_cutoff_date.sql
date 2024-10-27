@@ -2,6 +2,7 @@
 
 WITH CollisionCutoffDates AS (
     -- collision cut-off date is used to set a maximum time boundary for a case to be considered "valid" when they have "upload pending/uploaded" status; reference = https://ecollisionanalytics-pappa1:14501/eCollisionAnalytics_prd/app/administration/EditingCutoffDatesList.seam?cid=171&conversationPropagation=end
+    -- This CTE defines cutoff dates for each year, indicating the last date a case can be considered valid based on status
     SELECT 2024 AS created_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
     SELECT 2023 AS created_year, TO_DATE('2025-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
     SELECT 2022 AS created_year, TO_DATE('2024-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
@@ -25,7 +26,8 @@ WITH CollisionCutoffDates AS (
     SELECT 2004 AS created_year, TO_DATE('2005-01-02', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL
 ),
 CollisionEarliestDate AS (
-  -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision an preset cut-off date
+  -- pulling the earliest collision status history date. This earliest date will be mapped with the corresponding cut-off date, which gives each collision a preset cut-off date
+  -- This CTE retrieves the earliest status change date for each collision from the status history
   SELECT
     collision_id,
     TO_CHAR(MIN(created_timestamp), 'YYYY-MM-DD') AS earliest_created_date
@@ -35,6 +37,7 @@ CollisionEarliestDate AS (
     collision_id
 ),
 CollisionCaseYear AS (
+  -- This CTE extracts the created year from the earliest collision date, establishing the year for the collision case
   SELECT
     ced.collision_id,
     EXTRACT(
@@ -47,6 +50,7 @@ CollisionCaseYear AS (
     CollisionEarliestDate ced
 ),
 CollisionWithCutoff AS (
+  -- This CTE joins the collisions with their corresponding cutoff dates based on the created year
   SELECT
     ccy.collision_id,
     ccy.created_year,
@@ -56,6 +60,7 @@ CollisionWithCutoff AS (
     JOIN CollisionCutoffDates ccd ON ccy.created_year = ccd.created_year
 ),
 CollisionStatusOnCutoff AS (
+  -- This CTE retrieves the status history for collisions that occurred before or on the cutoff date, including ranking them by the effective date
   SELECT
     cwc.collision_id,
     cwc.created_year,
@@ -76,6 +81,7 @@ CollisionStatusOnCutoff AS (
     TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
 ),
 CollisionStatusOnCutoffFiltered AS (
+  -- This CTE filters the collision status records to include only those that are valid at the cutoff date
   select
     *
   from
@@ -84,6 +90,7 @@ CollisionStatusOnCutoffFiltered AS (
     effective_date <= cutoff_end_date
 ),
 CollisionStatusOnCutoffFilteredTwice as (
+  -- This CTE further processes the filtered statuses to rank them again and prepare for final selection
   select
     collision_id,
     created_year,
@@ -100,6 +107,7 @@ CollisionStatusOnCutoffFilteredTwice as (
     CollisionStatusOnCutoffFiltered
 ),
 CollisionStatusOnCutoffFilteredThrice as (
+  -- This CTE selects the top-ranked status for each collision, ensuring that only the most recent valid status is considered
   select
     *
   from

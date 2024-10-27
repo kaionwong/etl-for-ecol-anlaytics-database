@@ -7,7 +7,7 @@ input_dir1 = "mainframe_flat_files"
 input_dir2 = "Collisions 2000-2016"
 input_filename = 'Collisions'
 file_year = 2000
-save_switch = True
+save_switch = False
 
 # Mapping of character positions and column names
 column_mapping = [
