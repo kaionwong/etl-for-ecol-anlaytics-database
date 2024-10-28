@@ -28,7 +28,7 @@ sql_query_to_execute_edmonton_agg = os.path.join(base_path, f'query_ecollision_o
 sql_query_to_execute_calgary_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=calgary_agg=true.sql')
 
 # set up for Oracle SQL db connection
-oracle_instant_client_dir = os.getenv('ORACLE_INSTANT_CLIENT_DIR')
+oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.5.0.24.07\\instantclient_23_5'
 cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
 
 conn_info = {
