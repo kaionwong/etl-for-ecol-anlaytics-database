@@ -113,36 +113,36 @@ def remove_space(df, column_name):
 
 if all_year_switch:
     mainframe_year_file = [
-        'mainframe_extract_collisions_2000.csv',
-        'mainframe_extract_collisions_2001.csv',
-        'mainframe_extract_collisions_2002.csv',
-        'mainframe_extract_collisions_2003.csv',
-        'mainframe_extract_collisions_2004.csv',
-        'mainframe_extract_collisions_2005.csv',
-        'mainframe_extract_collisions_2006.csv',
-        'mainframe_extract_collisions_2007.csv',
-        'mainframe_extract_collisions_2008.csv',
-        'mainframe_extract_collisions_2009.csv',
-        'mainframe_extract_collisions_2010.csv',
-        'mainframe_extract_collisions_2011.csv',
-        'mainframe_extract_collisions_2012.csv',
-        'mainframe_extract_collisions_2013.csv',   
-        'mainframe_extract_collisions_2014.csv',
-        'mainframe_extract_collisions_2015.csv',
-        'mainframe_extract_collisions_2016.csv',
+        'data\mainframe_extract_collisions_2000.csv',
+        'data\mainframe_extract_collisions_2001.csv',
+        'data\mainframe_extract_collisions_2002.csv',
+        'data\mainframe_extract_collisions_2003.csv',
+        'data\mainframe_extract_collisions_2004.csv',
+        'data\mainframe_extract_collisions_2005.csv',
+        'data\mainframe_extract_collisions_2006.csv',
+        'data\mainframe_extract_collisions_2007.csv',
+        'data\mainframe_extract_collisions_2008.csv',
+        'data\mainframe_extract_collisions_2009.csv',
+        'data\mainframe_extract_collisions_2010.csv',
+        'data\mainframe_extract_collisions_2011.csv',
+        'data\mainframe_extract_collisions_2012.csv',
+        'data\mainframe_extract_collisions_2013.csv',   
+        'data\mainframe_extract_collisions_2014.csv',
+        'data\mainframe_extract_collisions_2015.csv',
+        'data\mainframe_extract_collisions_2016.csv',
     ]
-    ecollision_analytics_sql_file = 'main_extract_ecollision_analytics_data_2000-2016.csv'
+    ecollision_analytics_sql_file = 'data\main_extract_ecollision_analytics_data_2000-2016.csv'
 
 else:
     mainframe_year_file = [
-        'mainframe_extract_collisions_2000.csv',
-        'mainframe_extract_collisions_2001.csv',
-        'mainframe_extract_collisions_2002.csv',
-        'mainframe_extract_collisions_2014.csv',
-        'mainframe_extract_collisions_2015.csv',
-        'mainframe_extract_collisions_2016.csv',
+        'data\mainframe_extract_collisions_2000.csv',
+        'data\mainframe_extract_collisions_2001.csv',
+        'data\mainframe_extract_collisions_2002.csv',
+        'data\mainframe_extract_collisions_2014.csv',
+        'data\mainframe_extract_collisions_2015.csv',
+        'data\mainframe_extract_collisions_2016.csv',
     ]
-    ecollision_analytics_sql_file = 'main_extract_ecollision_analytics_data_2000-2002_2014-2016.csv'
+    ecollision_analytics_sql_file = 'data\main_extract_ecollision_analytics_data_2000-2002_2014-2016.csv'
 
 # Read and concatenate mainframe CSV files
 df_mainframe = pd.concat([pd.read_csv(file) for file in mainframe_year_file], ignore_index=True)

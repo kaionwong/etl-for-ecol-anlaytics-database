@@ -37,7 +37,7 @@ date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP'
 
 # Time the reading of Oracle CSV file
 start_time = time.time()
-oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
+oracle_filename = 'data\extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
 df_oracle = pd.read_csv(oracle_filename, encoding='windows-1252')
 elapsed_time = time.time() - start_time
 print(f"Reading Oracle CSV took: {elapsed_time:.4f} seconds")
@@ -66,7 +66,7 @@ print(f"Processing Oracle data took: {elapsed_time:.4f} seconds")
 
 # Time the reading of Analytics CSV file
 start_time = time.time()
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
+analytics_filename = 'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
 df_analytics = pd.read_csv(analytics_filename)
 elapsed_time = time.time() - start_time
 print(f"Reading Analytics CSV took: {elapsed_time:.4f} seconds")

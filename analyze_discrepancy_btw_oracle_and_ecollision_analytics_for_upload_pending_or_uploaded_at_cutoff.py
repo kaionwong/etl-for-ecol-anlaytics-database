@@ -41,7 +41,7 @@ date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TI
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
+oracle_filename = 'data\extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
 oracle_file_path = oracle_filename
 df_oracle = pd.read_csv(oracle_file_path, encoding='windows-1252')
 
@@ -67,7 +67,7 @@ if start_date_str is not None and end_date_str is not None:
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
+analytics_filename = 'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 

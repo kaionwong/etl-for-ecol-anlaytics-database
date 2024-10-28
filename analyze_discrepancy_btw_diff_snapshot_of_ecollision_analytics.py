@@ -21,8 +21,8 @@ example_n = 200
 # >>> Input data and label setting #3
 filename_date1 = '2024-03-28'
 filename_date2 = '2024-04-29'
-extract_sql_snapshot1 = f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date1}.csv' 
-extract_sql_snapshot2 = f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date2}.csv'
+extract_sql_snapshot1 = f'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date1}.csv' 
+extract_sql_snapshot2 = f'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{filename_date2}.csv'
 data_label_1 = f'snapshot_{filename_date1}'
 data_label_2 = f'snapshot_{filename_date2}'
 

@@ -19,7 +19,7 @@ start_date_str = '2024-01-01'
 end_date_str = '2024-04-29'
 
 # get oracle information
-oracle_filename = 'search_ecollision_oracle_with_repeated_cl_status_v2_output_2024-04-30.csv'
+oracle_filename = 'data_dump\search_ecollision_oracle_with_repeated_cl_status_v2_output_2024-04-30.csv'
 oracle_file_path = folder_path + oracle_filename
 df_oracle = pd.read_csv(oracle_file_path)
 
