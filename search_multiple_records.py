@@ -1,7 +1,7 @@
 import pandas as pd
-import helper
+import helper_generic
 
-helper.pandas_output_setting()
+helper_generic.pandas_output_setting()
 
 def multiple_collision_record_search(df, varname, test_input):
     """
@@ -38,11 +38,11 @@ def multiple_collision_record_search(df, varname, test_input):
         # Invalid test_input type
         raise ValueError("Invalid test_input type. Must be a list.")
         
-filename0 = 'mainframe_extract_collisions_2001.csv'
-filename = 'main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024-03-xx.csv'
-filename2 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv'
-filename3 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
-filename4 = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
+filename0 = 'data/mainframe_extract_collisions_2001.csv'
+filename = 'data/main_extract_ecollision_analytics_data_2000-2021_snapshot_from_2024-03-xx.csv'
+filename2 = 'data/main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-03-28.csv'
+filename3 = 'data/main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-02.csv'
+filename4 = 'data/main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-07.csv'
 
 test_var = 'CASE_NBR' # 'case_number'; 'CASE_NBR'; 'COLLISION_ID'; 'PFN_FILE_NBR'
 test_strings =  ['1414785', '1447500', '1434165', '1441250', '1406432', '1447195', '1446310', '1448726']

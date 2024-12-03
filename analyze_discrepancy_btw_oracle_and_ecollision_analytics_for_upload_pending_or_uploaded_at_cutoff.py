@@ -9,7 +9,8 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 import re
-import helper as helper
+import helper_generic as helper
+import os
 
 # Helper function
 def clean_pfn_file_nbr(value):
@@ -31,19 +32,21 @@ def clean_pfn_file_nbr(value):
 helper.pandas_output_setting()
 
 # Main code
-folder_path = './output/'
+folder_path = './etl-for-ecol-anlaytics-database/output/'
 start_date_str = '2011-01-01'
-end_date_str = '2011-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
-save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
+data_file_suffix_date = '2024-12-03'
+save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = 'data\extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_2024-08-22.csv'
-oracle_file_path = oracle_filename
-df_oracle = pd.read_csv(oracle_file_path, encoding='windows-1252')
+oracle_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
+                               f'extract_collision_oracle_with_upload_pending_or_uploaded_on_cutoff_date_{data_file_suffix_date}.csv')
+# df_oracle = pd.read_csv(oracle_file_path, encoding='windows-1252')
+df_oracle = pd.read_csv(oracle_filename, encoding='windows-1252')
 
 # Clean and type-set CASE_NBR
 df_oracle['CASE_NBR'] = df_oracle['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
@@ -60,14 +63,17 @@ df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_fi
 # Apply date filter if both dates are provided
 if start_date_str is not None and end_date_str is not None:
     # Convert date_var_used_for_df_oracle into a date format that can be compared
-    df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], format='%y-%m-%d')
+    # df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], format='%y-%m-%d')
+    df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], errors='coerce')
     start_date = pd.to_datetime(start_date_str)
     end_date = pd.to_datetime(end_date_str)
     date_mask = (df_oracle[date_var_used_for_df_oracle] >= start_date) & (df_oracle[date_var_used_for_df_oracle] <= end_date)
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
+analytics_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
+                                  f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{data_file_suffix_date}.csv')
+
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 
