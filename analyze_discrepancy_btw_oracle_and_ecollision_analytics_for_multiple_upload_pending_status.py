@@ -36,7 +36,7 @@ if start_date_str is not None and end_date_str is not None:
     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = 'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-04-29.csv'
+analytics_filename = 'main_extract_ecollision_analytics_data_2000_onward_snapshot_from_2024-04-29.csv'
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 

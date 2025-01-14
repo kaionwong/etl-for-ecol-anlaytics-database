@@ -66,7 +66,7 @@ print(f"Processing Oracle data took: {elapsed_time:.4f} seconds")
 
 # Time the reading of Analytics CSV file
 start_time = time.time()
-analytics_filename = 'data\main_extract_ecollision_analytics_data_2000-2024_snapshot_from_2024-08-22.csv'
+analytics_filename = 'data\main_extract_ecollision_analytics_data_2000_onward_snapshot_from_2024-08-22.csv'
 df_analytics = pd.read_csv(analytics_filename)
 elapsed_time = time.time() - start_time
 print(f"Reading Analytics CSV took: {elapsed_time:.4f} seconds")

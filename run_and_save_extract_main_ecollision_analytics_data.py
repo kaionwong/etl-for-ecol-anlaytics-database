@@ -38,7 +38,7 @@ if __name__ == '__main__':
         os.makedirs(output_dir, exist_ok=True)
 
         # Save the DataFrame to a CSV file with the current date in the filename
-        analytics_filename = os.path.join(output_dir, f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{current_date}.csv')
+        analytics_filename = os.path.join(output_dir, f'main_extract_ecollision_analytics_data_2000_onward_snapshot_from_{current_date}.csv')
         df_analytics.to_csv(analytics_filename, index=False)
 
         print(f"Data saved to {analytics_filename}")

@@ -33,11 +33,11 @@ helper.pandas_output_setting()
 
 # Main code
 folder_path = './etl-for-ecol-anlaytics-database/output/'
-start_date_str = '2011-01-01'
-end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+start_date_str = '2018-01-01'
+end_date_str = '2022-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
-data_file_suffix_date = '2024-12-03'
+data_file_suffix_date = '2025-01-14'
 save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
@@ -55,6 +55,7 @@ df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 # Impute OCCURENCE_TIMESTAMP with REPORTED_TIMESTAMP is OCCURENCE_TIMESTAMP is NaN
 df_oracle['OCCURENCE_TIMESTAMP'].fillna(df_oracle['REPORTED_TIMESTAMP'], inplace=True)
 df_oracle['CASE_YEAR'].fillna(df_oracle['CREATED_YEAR'], inplace=True)
+
 df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
 
@@ -72,7 +73,7 @@ if start_date_str is not None and end_date_str is not None:
 
 # get eCollision Analytics information
 analytics_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
-                                  f'main_extract_ecollision_analytics_data_2000-2024_snapshot_from_{data_file_suffix_date}.csv')
+                                  f'main_extract_ecollision_analytics_data_2000_onward_snapshot_from_{data_file_suffix_date}.csv')
 
 df_analytics = pd.read_csv(analytics_filename)
 df_analytics['CASE_NBR'] = df_analytics['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)

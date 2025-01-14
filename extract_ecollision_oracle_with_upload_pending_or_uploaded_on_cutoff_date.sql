@@ -3,6 +3,7 @@
 WITH CollisionCutoffDates AS (
     -- collision cut-off date is used to set a maximum time boundary for a case to be considered "valid" when they have "upload pending/uploaded" status; reference = https://ecollisionanalytics-pappa1:14501/eCollisionAnalytics_prd/app/administration/EditingCutoffDatesList.seam?cid=171&conversationPropagation=end
     -- This CTE defines cutoff dates for each year, indicating the last date a case can be considered valid based on status
+    SELECT 2025 AS created_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
     SELECT 2024 AS created_year, TO_DATE('2026-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
     SELECT 2023 AS created_year, TO_DATE('2025-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
     SELECT 2022 AS created_year, TO_DATE('2024-06-30', 'YYYY-MM-DD') AS cutoff_end_date FROM DUAL UNION ALL
@@ -66,7 +67,7 @@ CollisionStatusOnCutoff AS (
     cwc.created_year,
     cwc.cutoff_end_date,
     csh.COLL_STATUS_TYPE_ID,
-    csh.EFFECTIVE_DATE,
+    TO_CHAR(TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD'), 'YY-MM-DD') AS EFFECTIVE_DATE,
     ROW_NUMBER() OVER (
       PARTITION BY cwc.collision_id
       ORDER BY
@@ -76,72 +77,65 @@ CollisionStatusOnCutoff AS (
   FROM
     CollisionWithCutoff cwc
     JOIN ecrdba.cl_status_history csh ON cwc.collision_id = csh.collision_id
-    AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+    AND TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date
   WHERE
-    TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date -- may try "EFFECTIVE_DATE" or "CREATED_TIMESTAMP"
+    TO_DATE(csh.EFFECTIVE_DATE, 'YYYY-MM-DD') <= cwc.cutoff_end_date
 ),
 CollisionStatusOnCutoffFiltered AS (
   -- This CTE filters the collision status records to include only those that are valid at the cutoff date
-  select
+  SELECT
     *
-  from
+  FROM
     CollisionStatusOnCutoff
-  where
-    effective_date <= cutoff_end_date
+  WHERE
+    TO_DATE(effective_date, 'YY-MM-DD') <= cutoff_end_date
 ),
-CollisionStatusOnCutoffFilteredTwice as (
+CollisionStatusOnCutoffFilteredTwice AS (
   -- This CTE further processes the filtered statuses to rank them again and prepare for final selection
-  select
+  SELECT
     collision_id,
     created_year,
     cutoff_end_date,
     coll_status_type_id,
     effective_date,
     rn,
-    row_number() over (
-      partition by collision_id
-      order by
-        rn asc
-    ) as rn2
-  from
+    ROW_NUMBER() OVER (
+      PARTITION BY collision_id
+      ORDER BY
+        rn ASC
+    ) AS rn2
+  FROM
     CollisionStatusOnCutoffFiltered
 ),
-CollisionStatusOnCutoffFilteredThrice as (
+CollisionStatusOnCutoffFilteredThrice AS (
   -- This CTE selects the top-ranked status for each collision, ensuring that only the most recent valid status is considered
-  select
+  SELECT
     *
-  from
+  FROM
     CollisionStatusOnCutoffFilteredTwice
-  where
+  WHERE
     rn2 = 1
 )
-select
+SELECT
   csoc.collision_id,
   csoc.created_year,
-  EXTRACT(YEAR FROM TO_DATE(c.OCCURENCE_TIMESTAMP, 'YY-MM-DD')) AS case_year,
+  EXTRACT(YEAR FROM TO_DATE(TO_CHAR(c.OCCURENCE_TIMESTAMP, 'YY-MM-DD'), 'YY-MM-DD')) AS case_year,
   csoc.cutoff_end_date,
   csoc.COLL_STATUS_TYPE_ID,
   csoc.EFFECTIVE_DATE,
   c.case_nbr,
   c.PFN_FILE_NBR,
-  c.occurence_timestamp,
-  c.reported_timestamp,
+  TO_CHAR(TO_DATE(c.occurence_timestamp, 'YYYY-MM-DD'), 'YY-MM-DD') AS occurence_timestamp,
+  TO_CHAR(TO_DATE(c.reported_timestamp, 'YYYY-MM-DD'), 'YY-MM-DD') AS reported_timestamp,
   CASE
     WHEN csoc.COLL_STATUS_TYPE_ID = 220 THEN 1 -- 220 as upload pending
     WHEN csoc.COLL_STATUS_TYPE_ID = 221 THEN 1 -- 221 as uploaded
     ELSE 0
   END AS valid_at_cutoff_flag
-from
+FROM
   CollisionStatusOnCutoffFilteredThrice csoc
-  left join ecrdba.collisions c on csoc.collision_id = c.id
-  
-  -- Testing below:
-  where 1=1
-    --and COLL_STATUS_TYPE_ID = 221
-    --and case_nbr = '13'
-  
-order by
-  csoc.collision_id
-
--- Testing below:
--- ORDER BY VALID_AT_CUTOFF_FLAG desc
+  LEFT JOIN ecrdba.collisions c ON csoc.collision_id = c.id
+WHERE
+  1 = 1
+ORDER BY
+  csoc.collision_id;
