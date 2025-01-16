@@ -33,8 +33,8 @@ helper.pandas_output_setting()
 
 # Main code
 folder_path = './etl-for-ecol-anlaytics-database/output/'
-start_date_str = '2018-01-01'
-end_date_str = '2022-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+start_date_str = '2000-01-01'
+end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
 data_file_suffix_date = '2025-01-14'
@@ -141,12 +141,12 @@ if save_switch:
 # df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['COLLISION_ID'].astype(str)
 
 # Method #2 of 'CASE_KEY' definition with CASE_NBR and CASE_YEAR (this returns the exact same result as Method #1)
-df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
-df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
+# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['CASE_YEAR'].astype(str)
+# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['CASE_YEAR'].astype(str)
 
 # Method #3 of 'CASE_KEY' definition with CASE_NBR and PFN_FILE_NBR_CLEANED
-# df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['PFN_FILE_NBR_CLEANED'].astype(str)
-# df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['PFN_FILE_NBR_CLEANED'].astype(str)
+df_oracle['CASE_KEY'] = df_oracle['CASE_NBR'].astype(str) + '_' + df_oracle['PFN_FILE_NBR_CLEANED'].astype(str)
+df_analytics['CASE_KEY'] = df_analytics['CASE_NBR'].astype(str) + '_' + df_analytics['PFN_FILE_NBR_CLEANED'].astype(str)
 
 # Find unique and common cases based on the composite key
 unique_mask2 = ~df_oracle['CASE_KEY'].isin(df_analytics['CASE_KEY'])
