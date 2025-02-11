@@ -33,11 +33,11 @@ helper.pandas_output_setting()
 
 # Main code
 folder_path = './etl-for-ecol-anlaytics-database/output/'
-start_date_str = '2000-01-01'
-end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
-buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
-                # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
-data_file_suffix_date = '2025-01-14'
+# start_date_str = '2007-01-01'
+# end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
+# buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
+#                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
+data_file_suffix_date = '2025-02-11'
 save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
@@ -51,6 +51,7 @@ df_oracle = pd.read_csv(oracle_filename, encoding='windows-1252')
 # Clean and type-set CASE_NBR
 df_oracle['CASE_NBR'] = df_oracle['CASE_NBR'].astype(str).str.replace(' ', '', regex=True)
 df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
+df_oracle_slice = df_oracle[df_oracle['CASE_NBR'] == '1446310']
 
 # Impute OCCURENCE_TIMESTAMP with REPORTED_TIMESTAMP is OCCURENCE_TIMESTAMP is NaN
 df_oracle['OCCURENCE_TIMESTAMP'].fillna(df_oracle['REPORTED_TIMESTAMP'], inplace=True)
@@ -62,14 +63,14 @@ df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
 df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
 # Apply date filter if both dates are provided
-if start_date_str is not None and end_date_str is not None:
-    # Convert date_var_used_for_df_oracle into a date format that can be compared
-    # df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], format='%y-%m-%d')
-    df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], errors='coerce')
-    start_date = pd.to_datetime(start_date_str)
-    end_date = pd.to_datetime(end_date_str)
-    date_mask = (df_oracle[date_var_used_for_df_oracle] >= start_date) & (df_oracle[date_var_used_for_df_oracle] <= end_date)
-    df_oracle = df_oracle[date_mask]
+# if start_date_str is not None and end_date_str is not None:
+#     # Convert date_var_used_for_df_oracle into a date format that can be compared
+#     # df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], format='%y-%m-%d')
+#     df_oracle[date_var_used_for_df_oracle] = pd.to_datetime(df_oracle[date_var_used_for_df_oracle], errors='coerce')
+#     start_date = pd.to_datetime(start_date_str)
+#     end_date = pd.to_datetime(end_date_str)
+#     date_mask = (df_oracle[date_var_used_for_df_oracle] >= start_date) & (df_oracle[date_var_used_for_df_oracle] <= end_date)
+#     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
 analytics_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
@@ -84,27 +85,28 @@ df_analytics['CASE_YEAR'] = df_analytics['CASE_YEAR'].astype(int)
 df_analytics['PFN_FILE_NBR_CLEANED'] = df_analytics['PFN_FILE_NBR'].apply(clean_pfn_file_nbr)
 
 # Apply date filter if both dates are provided
-if start_date_str is not None and end_date_str is not None:
-    # Convert OCCURENCE_TIMESTAMP into a date format that can be compared
-    df_analytics[date_var_used_for_df_analytics] = pd.to_datetime(df_analytics[date_var_used_for_df_analytics], format='%Y-%m-%d %H:%M:%S')
-    start_date = pd.to_datetime(start_date_str)
+# if start_date_str is not None and end_date_str is not None:
+#     # Convert OCCURENCE_TIMESTAMP into a date format that can be compared
+#     df_analytics[date_var_used_for_df_analytics] = pd.to_datetime(df_analytics[date_var_used_for_df_analytics], format='%Y-%m-%d %H:%M:%S')
+#     start_date = pd.to_datetime(start_date_str)
     
-    if buffer_days > 0:
-        end_date = pd.to_datetime(end_date_str)
-        buffered_end_date = end_date + pd.Timedelta(days=buffer_days)
-        date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= buffered_end_date)
-        df_analytics = df_analytics[date_mask]
+#     if buffer_days > 0:
+#         end_date = pd.to_datetime(end_date_str)
+#         buffered_end_date = end_date + pd.Timedelta(days=buffer_days)
+#         date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= buffered_end_date)
+#         df_analytics = df_analytics[date_mask]
     
-    else:
-        end_date = pd.to_datetime(end_date_str)
-        date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= end_date)
-        df_analytics = df_analytics[date_mask]
+#     else:
+#         end_date = pd.to_datetime(end_date_str)
+#         date_mask = (df_analytics[date_var_used_for_df_analytics] >= start_date) & (df_analytics[date_var_used_for_df_analytics] <= end_date)
+#         df_analytics = df_analytics[date_mask]
 
 # Output discrepancies - #1 this compares simply if there is a descrepancies of case_number between two dataframes
 # .. caveat - sometimes a case_number exists in both dfs can still be missing. How? Here is an example:
 # .. case_number = 136571 exists in eCollision Oracle, and it is a 2012 collision. The same case_number exists in eCollision Analytics, but
 # .. it is a 2001 case, thus the supposed 2012 case from Oracle is still missing in eCollision Analytics.
 # Generate the lists
+
 unique_mask1 = ~df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
 unique_case_nbr_list1 = df_oracle.loc[unique_mask1, 'CASE_NBR'].tolist()
 common_mask1 = df_oracle['CASE_NBR'].isin(df_analytics['CASE_NBR'])
@@ -127,7 +129,8 @@ now = datetime.now()
 timestamp_str = now.strftime('%Y-%m-%d_%H-%M-%S')
 
 if save_switch:    
-    output_filename = f'method1_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
+    # output_filename = f'method1_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
+    output_filename = f'method1_unique_case_number_from_oracle_not_in_ecol_analytics_at_{timestamp_str}.csv'
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy1.to_csv(output_file_path, index=False, header=True)
 
@@ -168,15 +171,16 @@ print('Method #2: Discrepancy (missing in Oracle) volume by year:', df_analytics
 
 # Save the list if save_switch is True
 if save_switch:    
-    output_filename = f'method2_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
+    # output_filename = f'method2_unique_case_number_from_oracle_not_in_ecol_analytics_{start_date_str}_{end_date_str}_at_{timestamp_str}.csv'
+    output_filename = f'method2_unique_case_number_from_oracle_not_in_ecol_analytics_at_{timestamp_str}.csv'
     output_file_path = folder_path + output_filename
     df_oracle_discrepancy2.to_csv(output_file_path, index=False, header=True)
 
 # Warning output
-print(f'IMPORTANT WARNING!!! Caveat: The last year will be overestimation due to {end_date_str} used as when this end date is applied to both \
-      df_oracle and df_analytics, it includes this last date for checking, but since it takes a day or a weekend (if the changes occurs on \
-      Friday), so the "discrepancy" or missing cases in eCollision Analytics for the last day is simply due to time required to sync from eCollision \
-      Oracle to eCollision Analytics.')
+# print(f'IMPORTANT WARNING!!! Caveat: The last year will be overestimation due to {end_date_str} used as when this end date is applied to both \
+#       df_oracle and df_analytics, it includes this last date for checking, but since it takes a day or a weekend (if the changes occurs on \
+#       Friday), so the "discrepancy" or missing cases in eCollision Analytics for the last day is simply due to time required to sync from eCollision \
+#       Oracle to eCollision Analytics.')
 print(f'IMPORTANT WARNING!!! "Missing" in eCollision Oracle db is typically not real missing, but due to how case_year is calculated, it may be \
     recorded as a different adjacent year as compared to eCollision Analytics. Or they may be missing some timestamp data (occurence and reported \
         timestamp). So they cannot be compared with eCollision Analytics with the compound key')
