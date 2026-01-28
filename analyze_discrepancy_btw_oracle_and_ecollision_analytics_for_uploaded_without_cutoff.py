@@ -37,13 +37,13 @@ folder_path = './etl-for-ecol-anlaytics-database/output/'
 # end_date_str = '2025-12-31' # make sure this end date is on or earlier than both oracle_filename and analytics_filename (shown by the date in filenames)
 # buffer_days = 0 # WARNING: if buffer date is larger than 0, this number of days will be added to eCollision Analytics end date to give a buffer since it may have 1 to multiple day (over weekend) for eCollision Oracle changes to be updated in eCollision Analytics; can also use this as a more loose buffer to allow a gap for Analytics' updates
 #                 # use buffer_days > 0 only if you are analyzing current year to accomodate for the gap in Oracle's updates to Analytics; for previous years, always set buffer_days = 0
-data_file_suffix_date = '2025-02-21'
-save_switch = True # WARNING: This will overwrite files with the same filename if the save_switch is True
+data_file_suffix_date = '2025-04-08'
+save_switch = False # WARNING: This will overwrite files with the same filename if the save_switch is True
 date_var_used_for_df_oracle = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP', 'EFFECTIVE_DATE'
 date_var_used_for_df_analytics = 'OCCURENCE_TIMESTAMP' # options are: 'OCCURENCE_TIMESTAMP', 'REPORTED_TIMESTAMP'
 
 # get oracle information
-oracle_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
+oracle_filename = os.path.join(os.getcwd(), 'data', 
                                f'extract_collision_oracle_with_uploaded_without_cutoff_date_{data_file_suffix_date}.csv')
 # df_oracle = pd.read_csv(oracle_file_path, encoding='windows-1252')
 df_oracle = pd.read_csv(oracle_filename, encoding='windows-1252')
@@ -54,8 +54,8 @@ df_oracle = df_oracle[df_oracle['VALID_AT_CUTOFF_FLAG']==1]
 df_oracle_slice = df_oracle[df_oracle['CASE_NBR'] == '1446310']
 
 # Impute OCCURENCE_TIMESTAMP with REPORTED_TIMESTAMP is OCCURENCE_TIMESTAMP is NaN
-df_oracle['OCCURENCE_TIMESTAMP'].fillna(df_oracle['REPORTED_TIMESTAMP'], inplace=True)
-df_oracle['CASE_YEAR'].fillna(df_oracle['CREATED_YEAR'], inplace=True)
+df_oracle['OCCURENCE_TIMESTAMP'] = df_oracle['OCCURENCE_TIMESTAMP'].fillna(df_oracle['REPORTED_TIMESTAMP'])
+df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].fillna(df_oracle['CREATED_YEAR'])
 
 df_oracle = df_oracle.replace([np.inf, -np.inf], np.nan).dropna(subset=['CASE_YEAR'])
 df_oracle['CASE_YEAR'] = df_oracle['CASE_YEAR'].astype(int)
@@ -73,7 +73,7 @@ df_oracle['PFN_FILE_NBR_CLEANED'] = df_oracle['PFN_FILE_NBR'].apply(clean_pfn_fi
 #     df_oracle = df_oracle[date_mask]
 
 # get eCollision Analytics information
-analytics_filename = os.path.join(os.getcwd(), 'etl-for-ecol-anlaytics-database', 'data', 
+analytics_filename = os.path.join(os.getcwd(), 'data', 
                                   f'main_extract_ecollision_analytics_data_2000_onward_snapshot_from_{data_file_suffix_date}.csv')
 
 df_analytics = pd.read_csv(analytics_filename)

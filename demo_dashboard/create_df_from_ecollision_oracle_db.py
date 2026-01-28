@@ -18,7 +18,7 @@ query_agg = False # options: True, False
 print_switch = False
 
 # select the sql query to execute; options below:
-base_path = os.getenv('DEMO_DASHBOARD_BASE_PATH')
+base_path = os.path.dirname(os.path.abspath(__file__))
 
 # sql_query_to_execute = 'traffic_dashboard/test_query.sql'
 # sql_query_to_execute = f'traffic_dashboard/test_ecollision_oracle_for_analytics_v5_city={query_city}_agg={str(query_agg).lower()}.sql'
