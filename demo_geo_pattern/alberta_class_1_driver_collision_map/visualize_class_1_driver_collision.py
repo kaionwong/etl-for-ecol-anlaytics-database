@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import risk_analysis as ra
 
 # Page config
 st.set_page_config(
@@ -15,6 +16,9 @@ st.set_page_config(
 # Title
 st.title("🚛 Alberta Class 1 Driver Collision Analysis")
 st.markdown("**Interactive visualization of collision patterns across Alberta (Apr 2024 - Sep 2025)**")
+
+# Create tabs
+tab1, tab2 = st.tabs(["📊 Overview Dashboard", "⚠️ Risk Analysis"])
 
 # Load data
 @st.cache_data
@@ -31,18 +35,23 @@ def load_data():
 
 df = load_data()
 
-# Sidebar filters
-st.sidebar.header("🔍 Filters")
-
-# Date range filter
-min_date = df['OCCURENCE_DATE'].min().date()
-max_date = df['OCCURENCE_DATE'].max().date()
-date_range = st.sidebar.date_input(
-    "Date Range",
-    value=(min_date, max_date),
-    min_value=min_date,
-    max_value=max_date
-)
+with tab1:
+    # ============================================================================
+    # TAB 1: OVERVIEW DASHBOARD
+    # ============================================================================
+    
+    # Sidebar filters
+    st.sidebar.header("🔍 Filters")
+    
+    # Date range filter
+    min_date = df['OCCURENCE_DATE'].min().date()
+    max_date = df['OCCURENCE_DATE'].max().date()
+    date_range = st.sidebar.date_input(
+        "Date Range",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date
+    )
 
 # Severity filter
 severity_options = ['All'] + sorted(df['COLLISION_SEVERITY'].dropna().unique().tolist())
