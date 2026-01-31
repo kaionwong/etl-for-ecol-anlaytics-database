@@ -1,4 +1,4 @@
-import cx_Oracle
+import oracledb
 import pandas as pd
 from dotenv import load_dotenv
 import os
@@ -27,9 +27,10 @@ sql_query_to_execute_calgary_not_agg = os.path.join(base_path, f'query_ecollisio
 sql_query_to_execute_edmonton_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=edmonton_agg=true.sql')
 sql_query_to_execute_calgary_agg = os.path.join(base_path, f'query_ecollision_oracle_for_analytics_v5_city=calgary_agg=true.sql')
 
-# set up for Oracle SQL db connection
-oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.5.0.24.07\\instantclient_23_5'
-cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
+# set up for Oracle SQL db connection (using oracledb thin mode - no Instant Client required)
+# If you need thick mode with Instant Client, uncomment:
+# oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.5.0.24.07\\instantclient_23_5'
+# oracledb.init_oracle_client(lib_dir=oracle_instant_client_dir)
 
 conn_info = {
     'host': oracle_host,
@@ -43,7 +44,9 @@ conn_str = '{user}/{psw}@//{host}:{port}/{service}'.format(**conn_info)
 
 class DB:
     def __init__(self):
-        self.conn = cx_Oracle.connect(conn_str)
+        self.conn = oracledb.connect(user=username, password=user_password, 
+                                      host=oracle_host, port=int(oracle_port), 
+                                      service_name=oracle_service)
 
     def query_with_param(self, query, params=None):
         cursor = self.conn.cursor()
@@ -67,33 +70,59 @@ class DB:
         self.conn.close()
 
 ######
-# connect to Oracle SQL db, and create df_edmonton_agg
-db = DB()
-sql_query_edmonton_agg = db.load_query_from_file(sql_query_to_execute_edmonton_agg)
-result_edmonton_agg = db.query_without_param(sql_query_edmonton_agg)
-db.close_connection()
+# Attempt to connect to Oracle SQL db
+# Fallback to sample data if environment variables are missing or connection fails
 
-# convert the query result to a Pandas DataFrame
-header, data = result_edmonton_agg[0], result_edmonton_agg[1]
-df_edmonton_agg = pd.DataFrame(data, columns=header)
-df_edmonton_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
-df_edmonton_agg['CITY'] = 'Edmonton'
+def create_sample_df():
+    """Create a sample DataFrame for testing when DB is unavailable."""
+    sample_data = {
+        'CASE_YEAR': [2020, 2021, 2022, 2023, 2024, 2020, 2021, 2022, 2023, 2024],
+        'CATEGORY': ['Type A', 'Type A', 'Type A', 'Type A', 'Type A', 'Type B', 'Type B', 'Type B', 'Type B', 'Type B'],
+        'COUNT': [150, 175, 200, 180, 210, 100, 120, 140, 130, 155],
+        'TABLE_NAME': ['Analytics', 'Analytics', 'Analytics', 'Analytics', 'Analytics', 'Oracle', 'Oracle', 'Oracle', 'Oracle', 'Oracle'],
+        'TABLE_ORDER': [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+        'CITY': ['Edmonton', 'Edmonton', 'Edmonton', 'Edmonton', 'Edmonton', 'Calgary', 'Calgary', 'Calgary', 'Calgary', 'Calgary']
+    }
+    return pd.DataFrame(sample_data)
 
-# connect to Oracle SQL db, and create df_calgary_agg
-db = DB()
-sql_query_calgary_agg = db.load_query_from_file(sql_query_to_execute_calgary_agg)
-result_calgary_agg = db.query_without_param(sql_query_calgary_agg)
-db.close_connection()
+try:
+    # Check if all required environment variables are set
+    if not all([username, user_password, oracle_host, oracle_port, oracle_service]):
+        print("⚠️  Warning: Missing Oracle environment variables. Using sample data.")
+        raise ValueError("Incomplete Oracle credentials")
+    
+    # connect to Oracle SQL db, and create df_edmonton_agg
+    db = DB()
+    sql_query_edmonton_agg = db.load_query_from_file(sql_query_to_execute_edmonton_agg)
+    result_edmonton_agg = db.query_without_param(sql_query_edmonton_agg)
+    db.close_connection()
 
-# convert the query result to a Pandas DataFrame
-header, data = result_calgary_agg[0], result_calgary_agg[1]
-df_calgary_agg = pd.DataFrame(data, columns=header)
-df_calgary_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
-df_calgary_agg['CITY'] = 'Calgary'
+    # convert the query result to a Pandas DataFrame
+    header, data = result_edmonton_agg[0], result_edmonton_agg[1]
+    df_edmonton_agg = pd.DataFrame(data, columns=header)
+    df_edmonton_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
+    df_edmonton_agg['CITY'] = 'Edmonton'
 
-# mrege df_edmonton_agg and df_calgary_agg
-df_agg = pd.concat([df_edmonton_agg, df_calgary_agg], ignore_index=True)
-df_agg.reset_index(drop=True, inplace=True)
+    # connect to Oracle SQL db, and create df_calgary_agg
+    db = DB()
+    sql_query_calgary_agg = db.load_query_from_file(sql_query_to_execute_calgary_agg)
+    result_calgary_agg = db.query_without_param(sql_query_calgary_agg)
+    db.close_connection()
+
+    # convert the query result to a Pandas DataFrame
+    header, data = result_calgary_agg[0], result_calgary_agg[1]
+    df_calgary_agg = pd.DataFrame(data, columns=header)
+    df_calgary_agg.rename(columns={'TABLENAME': 'TABLE_NAME', 'TABLEORDER': 'TABLE_ORDER'}, inplace=True)
+    df_calgary_agg['CITY'] = 'Calgary'
+
+    # merge df_edmonton_agg and df_calgary_agg
+    df_agg = pd.concat([df_edmonton_agg, df_calgary_agg], ignore_index=True)
+    df_agg.reset_index(drop=True, inplace=True)
+    
+except Exception as e:
+    print(f"⚠️  Failed to connect to Oracle database: {e}")
+    print("    Using sample data instead. Set environment variables to connect to the real database.")
+    df_agg = create_sample_df()
 
 if __name__ == '__main__':
     print(df_agg.head())

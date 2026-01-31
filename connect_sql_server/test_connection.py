@@ -1,4 +1,4 @@
-import cx_Oracle
+import oracledb
 from dotenv import load_dotenv
 import os
 
@@ -14,8 +14,15 @@ oracle_service = os.getenv('ECOLLISION_ORACLE_SQL_SERVICE_NAME')
 n_row_to_print = 10
 
 # set up for Oracle SQL db connection
-oracle_instant_client_dir = 'C:\\Users\\kai.wong\\_local_dev\\oracle_instant_client\\instantclient-basic-windows.x64-23.5.0.24.07\\instantclient_23_5'
-cx_Oracle.init_oracle_client(lib_dir=oracle_instant_client_dir)
+oracle_instant_client_dir = r'C:\Users\kai.wong\_local_dev\oracle_instant_client\instantclient-basic-windows.x64-23.5.0.24.07\instantclient_23_5'
+# If you have the Instant Client installed, init it; otherwise oracledb will run in thin mode.
+try:
+    if os.path.isdir(oracle_instant_client_dir):
+        oracledb.init_oracle_client(lib_dir=oracle_instant_client_dir)
+    else:
+        print('Oracle Instant Client not found at', oracle_instant_client_dir, '- using thin mode (no Instant Client required).')
+except Exception as e:
+    print('Could not initialize Oracle Instant Client:', e)
 
 conn_info = {
     'host': oracle_host,
@@ -38,7 +45,8 @@ sql_query = '''
 
 class DB:
     def __init__(self):
-        self.conn = cx_Oracle.connect(conn_str)
+        # oracledb.connect accepts the same connection string format as cx_Oracle
+        self.conn = oracledb.connect(conn_str)
 
     def query_with_param(self, query, params=None):
         cursor = self.conn.cursor()
