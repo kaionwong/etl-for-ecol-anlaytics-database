@@ -24,7 +24,7 @@ This project demonstrates advanced geographical visualization capabilities for c
 C:\Users\kai.wong\Dev\virtual_env\venv_etl_for_ecol_analytics\Scripts\Activate.ps1
 
 # Navigate to project directory
-cd C:\Users\kai.wong\OneDrive - Government of Alberta\_work\project\etl_for_ecol_analytics_database\etl-for-ecol-anlaytics-database\demo_geo_pattern\alberta_class_1_driver_collision_map
+cd C:\Users\kai.wong\OneDrive - Government of Alberta\_work\project\etl_for_ecol_analytics_database\etl-for-ecol-anlaytics-database\demo_geo_pattern
 
 # Install missing dependencies (if needed)
 pip install plotly
@@ -125,7 +125,7 @@ High-Risk Criteria:
 alberta_class_1_driver_collision_map/
 ├── README.md                                    # This file
 ├── visualize_class_1_driver_collision_v2.py    # Main dashboard application
-├── risk_analysis.py                             # Risk scoring and analysis module
+├── class_1_driver_risk_analysis.py              # Risk scoring and analysis module
 ├── process_class_1_driver_collision.py         # Data preprocessing script
 ├── processed_class_1_driver_collision.csv      # Input data file (12,342 rows)
 ├── alberta_collision_2024-2025.csv             # Raw Alberta data (455,996 rows)
@@ -168,7 +168,7 @@ streamlit run visualize_class_1_driver_collision_v2.py
 
 ## 📖 Module Documentation
 
-### `risk_analysis.py`
+### `class_1_driver_risk_analysis.py`
 
 Core functions for risk calculation and geographical analysis.
 
@@ -247,8 +247,8 @@ pip show streamlit
 pip install --upgrade streamlit plotly pandas
 ```
 
-### "Module not found: risk_analysis"
-- Ensure `risk_analysis.py` is in the same directory as the dashboard script
+### "Module not found: class_1_driver_risk_analysis"
+- Ensure `class_1_driver_risk_analysis.py` is in the same directory as the dashboard script
 - Check current working directory: `Get-Location`
 
 ### "File not found: processed_class_1_driver_collision.csv"

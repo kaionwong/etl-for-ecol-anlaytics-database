@@ -1,9 +1,9 @@
 r"""
-Alberta Class 1 Driver Collision Analysis Dashboard
-====================================================
+Edmonton Driver Collision Analysis Dashboard
+=============================================
 
 This Streamlit application provides interactive visualization and risk analysis
-for Class 1 driver collisions across Alberta (April 2024 - September 2025).
+for driver collisions across Edmonton (2000-2026).
 
 HOW TO RUN:
 -----------
@@ -11,37 +11,37 @@ HOW TO RUN:
    C:\Users\kai.wong\Dev\virtual_env\venv_etl_for_ecol_analytics\Scripts\Activate.ps1
 
 2. Navigate to the directory:
-   cd demo_geo_pattern\alberta_class_1_driver_collision_map
+   cd demo_advanced_analytics\edmonton_driver_collision
 
 3. Run the Streamlit app:
-   streamlit run visualize_class_1_driver_collision_v2.py
+   streamlit run visualize_edmonton_driver_collision.py
 
    OR using full path:
-   C:\Users\kai.wong\Dev\virtual_env\venv_etl_for_ecol_analytics\Scripts\streamlit.exe run visualize_class_1_driver_collision_v2.py
+   C:\Users\kai.wong\Dev\virtual_env\venv_etl_for_ecol_analytics\Scripts\streamlit.exe run visualize_edmonton_driver_collision.py
 
 4. Open browser to:
    http://localhost:8501
 
 REQUIREMENTS:
 -------------
-- processed_class_1_driver_collision.csv (in same directory)
-- risk_analysis.py (in same directory)
+- processed_edmonton_driver_collision.csv (in same directory)
+- edmonton_driver_risk_analysis.py (in same directory)
 - Python packages: streamlit, pandas, plotly
 
 FEATURES:
 ---------
 Tab 1 - Overview Dashboard:
   - Interactive collision map
-  - Filters: date range, severity, driver action, parked vehicle
+  - Filters: date range, severity, parked vehicle
   - Time series analysis
-  - Driver action breakdown
+  - Severity breakdown
   - Vehicle count distribution
 
 Tab 2 - Risk Analysis:
   - Risk scoring (Vehicles×1 + Injuries×5 + Fatalities×20)
   - Heat map visualization
   - Hexagonal grid risk zones
-  - Highway corridor analysis
+  - Edmonton zone analysis
   - Temporal risk trends
   - Top 20 highest risk locations
 
@@ -53,12 +53,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
-import risk_analysis as ra
+import edmonton_driver_risk_analysis as ra
 
 # Page config
 st.set_page_config(
-    page_title="Alberta Class 1 Driver Collisions",
-    page_icon="🚛",
+    page_title="Edmonton Driver Collisions",
+    page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -66,21 +66,23 @@ st.set_page_config(
 # Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv('processed_class_1_driver_collision.csv')
-    df['OCCURENCE_DATE'] = pd.to_datetime(df['OCCURENCE_TIMESTRING'])
+    df = pd.read_csv('processed_edmonton_driver_collision.csv', low_memory=False)
+    df['OCCURENCE_DATE'] = pd.to_datetime(df['OCCURENCE_TIMESTRING'], errors='coerce', format='%Y/%m/%d')
+    # Remove rows with invalid dates
+    df = df.dropna(subset=['OCCURENCE_DATE'])
     df['MONTH'] = df['OCCURENCE_DATE'].dt.to_period('M').astype(str)
     df['YEAR_MONTH'] = df['OCCURENCE_DATE'].dt.strftime('%Y-%m')
     # Clean lat/long - remove invalid coordinates
     df = df.dropna(subset=['LOC_GPS_LAT', 'LOC_GPS_LONG'])
-    df = df[(df['LOC_GPS_LAT'] >= 49) & (df['LOC_GPS_LAT'] <= 60)]  # Alberta latitude range
-    df = df[(df['LOC_GPS_LONG'] >= -120) & (df['LOC_GPS_LONG'] <= -110)]  # Alberta longitude range
+    df = df[(df['LOC_GPS_LAT'] >= 53.3) & (df['LOC_GPS_LAT'] <= 53.8)]  # Edmonton latitude range
+    df = df[(df['LOC_GPS_LONG'] >= -113.8) & (df['LOC_GPS_LONG'] <= -113.1)]  # Edmonton longitude range
     return df
 
 df = load_data()
 
 # Title
-st.title("🚛 Alberta Class 1 Driver Collision Analysis")
-st.markdown("**Interactive visualization of collision patterns across Alberta (Apr 2024 - Sep 2025)**")
+st.title("🚗 Edmonton Driver Collision Analysis")
+st.markdown("**Interactive visualization of collision patterns across Edmonton (2000-2026)**")
 
 # Create tabs
 tab1, tab2 = st.tabs(["📊 Overview Dashboard", "⚠️ Risk Analysis"])
@@ -114,15 +116,6 @@ with tab1:
         key="tab1_severity"
     )
     
-    # Driver Action filter
-    driver_action_options = ['All'] + sorted(df['DRIVER_ACTION_ID'].dropna().unique().tolist())
-    selected_driver_action = st.sidebar.multiselect(
-        "Driver Action ID",
-        options=driver_action_options,
-        default=['All'],
-        key="tab1_driver"
-    )
-    
     # Parked vehicle filter
     parked_vehicle = st.sidebar.selectbox(
         "Parked Vehicle Involved",
@@ -151,10 +144,6 @@ with tab1:
     # Severity filter
     if 'All' not in selected_severity and len(selected_severity) > 0:
         df_filtered = df_filtered[df_filtered['COLLISION_SEVERITY'].isin(selected_severity)]
-    
-    # Driver action filter
-    if 'All' not in selected_driver_action and len(selected_driver_action) > 0:
-        df_filtered = df_filtered[df_filtered['DRIVER_ACTION_ID'].isin(selected_driver_action)]
     
     # Parked vehicle filter
     if parked_vehicle == 'Yes (Y)':
@@ -200,7 +189,7 @@ with tab1:
             color='COLLISION_SEVERITY',
             size='SIZE',
             hover_name='HOVER_TEXT',
-            zoom=5,
+            zoom=10,
             height=600,
             opacity=0.7,
             color_discrete_sequence=px.colors.qualitative.Vivid
@@ -209,8 +198,8 @@ with tab1:
         fig_map.update_layout(
             mapbox_style="open-street-map",
             mapbox=dict(
-                center=dict(lat=53.5, lon=-115),
-                zoom=5
+                center=dict(lat=53.5, lon=-113.5),
+                zoom=10
             ),
             margin={"r":0,"t":0,"l":0,"b":0}
         )
@@ -247,40 +236,23 @@ with tab1:
             )
             st.plotly_chart(fig_severity, use_container_width=True)
         
-        col3, col4 = st.columns(2)
-        
-        with col3:
-            st.subheader("🚗 Top 10 Driver Actions")
-            driver_action_counts = df_filtered['DRIVER_ACTION_ID'].value_counts().head(10).reset_index()
-            driver_action_counts.columns = ['Driver Action ID', 'Count']
-            fig_driver = px.bar(
-                driver_action_counts,
-                x='Count',
-                y='Driver Action ID',
-                orientation='h',
-                height=400
-            )
-            fig_driver.update_layout(yaxis={'categoryorder':'total ascending'})
-            st.plotly_chart(fig_driver, use_container_width=True)
-        
-        with col4:
-            st.subheader("🚙 Vehicles Involved")
-            vehicle_counts = df_filtered['VEHICLES_NBR'].value_counts().sort_index().reset_index()
-            vehicle_counts.columns = ['Number of Vehicles', 'Count']
-            fig_vehicles = px.bar(
-                vehicle_counts,
-                x='Number of Vehicles',
-                y='Count',
-                height=400
-            )
-            st.plotly_chart(fig_vehicles, use_container_width=True)
+        st.subheader("🚙 Vehicles Involved")
+        vehicle_counts = df_filtered['VEHICLES_NBR'].value_counts().sort_index().reset_index()
+        vehicle_counts.columns = ['Number of Vehicles', 'Count']
+        fig_vehicles = px.bar(
+            vehicle_counts,
+            x='Number of Vehicles',
+            y='Count',
+            height=400
+        )
+        st.plotly_chart(fig_vehicles, use_container_width=True)
         
         # Data table
         st.markdown("---")
         st.subheader("📊 Detailed Data")
         st.dataframe(
             df_filtered[[
-                'CASE_NBR', 'CASE_YEAR', 'COLLISION_SEVERITY', 'DRIVER_ACTION_ID',
+                'CASE_NBR', 'CASE_YEAR', 'COLLISION_SEVERITY',
                 'FLAG_PARKED_VEHICLE', 'VEHICLES_NBR', 'INJURED_NBR', 'FATALITIES_NBR',
                 'OCCURENCE_TIMESTRING', 'LOC_GPS_LAT', 'LOC_GPS_LONG'
             ]].sort_values('OCCURENCE_TIMESTRING', ascending=False),
@@ -343,8 +315,8 @@ with tab2:
         lon='LOC_GPS_LONG',
         z='risk_score',
         radius=15,
-        center=dict(lat=53.5, lon=-115),
-        zoom=5,
+        center=dict(lat=53.5, lon=-113.5),
+        zoom=10,
         mapbox_style="open-street-map",
         height=600,
         color_continuous_scale='Turbo',
@@ -376,14 +348,14 @@ with tab2:
         hover_name='hover_text',
         color_continuous_scale='Plasma',
         size_max=30,
-        zoom=5,
+        zoom=10,
         height=600,
         labels={'total_risk_score': 'Total Risk Score'}
     )
     
     fig_hex.update_layout(
         mapbox_style="open-street-map",
-        mapbox=dict(center=dict(lat=53.5, lon=-115), zoom=5),
+        mapbox=dict(center=dict(lat=53.5, lon=-113.5), zoom=10),
         margin={"r":0,"t":0,"l":0,"b":0}
     )
     
@@ -391,7 +363,7 @@ with tab2:
     
     st.markdown("---")
     
-    # Time Analysis and Highway Breakdown
+    # Time Analysis and Zone Breakdown
     col1, col2 = st.columns(2)
     
     with col1:
@@ -408,25 +380,25 @@ with tab2:
         st.plotly_chart(fig_temporal, use_container_width=True)
     
     with col2:
-        st.subheader("🛣️ Risk by Highway Corridor")
-        highway_risk = df_high_risk.groupby('highway_corridor').agg({
+        st.subheader("🏙️ Risk by Edmonton Zone")
+        zone_risk = df_high_risk.groupby('edmonton_zone').agg({
             'risk_score': 'sum',
             'CASE_NBR': 'count'
         }).reset_index().sort_values('risk_score', ascending=False)
-        highway_risk.columns = ['Highway', 'Total Risk', 'Collisions']
+        zone_risk.columns = ['Zone', 'Total Risk', 'Collisions']
         
-        fig_highway = px.bar(
-            highway_risk,
+        fig_zone = px.bar(
+            zone_risk,
             x='Total Risk',
-            y='Highway',
+            y='Zone',
             orientation='h',
             labels={'Total Risk': 'Total Risk Score'},
             height=400,
             color='Total Risk',
             color_continuous_scale='Reds'
         )
-        fig_highway.update_layout(yaxis={'categoryorder':'total ascending'})
-        st.plotly_chart(fig_highway, use_container_width=True)
+        fig_zone.update_layout(yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(fig_zone, use_container_width=True)
     
     st.markdown("---")
     
