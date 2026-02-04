@@ -64,7 +64,7 @@ st.set_page_config(
 )
 
 # Load data
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_data():
     df = pd.read_csv('processed_edmonton_driver_collision.csv', low_memory=False)
     df['OCCURENCE_DATE'] = pd.to_datetime(df['OCCURENCE_TIMESTRING'], errors='coerce', format='%Y/%m/%d')
@@ -81,11 +81,11 @@ def load_data():
 df = load_data()
 
 # Title
-st.title("🚗 Edmonton Driver Collision Analysis")
+st.title("Edmonton Driver Collision Analysis")
 st.markdown("**Interactive visualization of collision patterns across Edmonton (2000-2026)**")
 
 # Create tabs
-tab1, tab2 = st.tabs(["📊 Overview Dashboard", "⚠️ Risk Analysis"])
+tab1, tab2 = st.tabs(["Overview Dashboard", "Risk Analysis"])
 
 # ============================================================================
 # TAB 1: OVERVIEW DASHBOARD
@@ -94,16 +94,21 @@ with tab1:
     st.header("Overview Dashboard")
     
     # Sidebar filters
-    st.sidebar.header("🔍 Tab 1 Filters")
+    st.sidebar.header("🔍 Filters")
     
-    # Date range filter
-    min_date = df['OCCURENCE_DATE'].min().date()
-    max_date = df['OCCURENCE_DATE'].max().date()
+    # Date range filter - Default from 2021-01-01 to latest date
+    all_min_date = df['OCCURENCE_DATE'].min().date()
+    all_max_date = df['OCCURENCE_DATE'].max().date()
+    
+    # Set default to 2021-01-01 or earliest available, whichever is later
+    default_min = max(all_min_date, pd.Timestamp('2021-01-01').date())
+    default_max = all_max_date
+    
     date_range = st.sidebar.date_input(
-        "Date Range",
-        value=(min_date, max_date),
-        min_value=min_date,
-        max_value=max_date,
+        "Select Date Range",
+        value=(default_min, default_max),
+        min_value=all_min_date,
+        max_value=all_max_date,
         key="tab1_date"
     )
     
@@ -131,15 +136,15 @@ with tab1:
     )
     
     # Apply filters
-    df_filtered = df.copy()
-    
-    # Date filter
     if len(date_range) == 2:
         start_date, end_date = date_range
-        df_filtered = df_filtered[
-            (df_filtered['OCCURENCE_DATE'].dt.date >= start_date) &
-            (df_filtered['OCCURENCE_DATE'].dt.date <= end_date)
-        ]
+    else:
+        start_date, end_date = default_min, default_max
+        
+    df_filtered = df[
+        (df['OCCURENCE_DATE'].dt.date >= start_date) &
+        (df['OCCURENCE_DATE'].dt.date <= end_date)
+    ]
     
     # Severity filter
     if 'All' not in selected_severity and len(selected_severity) > 0:
@@ -166,24 +171,26 @@ with tab1:
     
     # Main content
     if len(df_filtered) == 0:
-        st.warning("⚠️ No data matches the selected filters. Please adjust your filter criteria.")
+        st.warning("No data matches the selected filters. Please adjust your filter criteria.")
     else:
         # Map visualization
-        st.subheader("📍 Collision Map")
+        st.subheader("Collision Map")
         
-        # Create color mapping for severity
-        df_filtered['SIZE'] = 5 + (df_filtered['FATALITIES_NBR'] * 10)
-        df_filtered['HOVER_TEXT'] = (
-            "Case: " + df_filtered['CASE_NBR'].astype(str) + "<br>" +
-            "Severity: " + df_filtered['COLLISION_SEVERITY'].astype(str) + "<br>" +
-            "Vehicles: " + df_filtered['VEHICLES_NBR'].astype(str) + "<br>" +
-            "Injured: " + df_filtered['INJURED_NBR'].astype(str) + "<br>" +
-            "Fatalities: " + df_filtered['FATALITIES_NBR'].astype(str) + "<br>" +
-            "Date: " + df_filtered['OCCURENCE_TIMESTRING'].astype(str)
+        # Prepare data for map without creating intermediate columns
+        map_data = df_filtered.assign(
+            SIZE=5 + (df_filtered['FATALITIES_NBR'] * 10),
+            HOVER_TEXT=(
+                "Case: " + df_filtered['CASE_NBR'].astype(str) + "<br>" +
+                "Severity: " + df_filtered['COLLISION_SEVERITY'].astype(str) + "<br>" +
+                "Vehicles: " + df_filtered['VEHICLES_NBR'].astype(str) + "<br>" +
+                "Injured: " + df_filtered['INJURED_NBR'].astype(str) + "<br>" +
+                "Fatalities: " + df_filtered['FATALITIES_NBR'].astype(str) + "<br>" +
+                "Date: " + df_filtered['OCCURENCE_TIMESTRING'].astype(str)
+            )
         )
         
         fig_map = px.scatter_mapbox(
-            df_filtered,
+            map_data,
             lat='LOC_GPS_LAT',
             lon='LOC_GPS_LONG',
             color='COLLISION_SEVERITY',
@@ -212,7 +219,7 @@ with tab1:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("📈 Collisions Over Time")
+            st.subheader("Collisions Over Time")
             time_series = df_filtered.groupby('YEAR_MONTH').size().reset_index(name='Count')
             fig_time = px.bar(
                 time_series,
@@ -225,18 +232,20 @@ with tab1:
             st.plotly_chart(fig_time, use_container_width=True)
         
         with col2:
-            st.subheader("⚠️ Collision Severity Distribution")
+            st.subheader("Collision Severity Distribution")
             severity_counts = df_filtered['COLLISION_SEVERITY'].value_counts().reset_index()
             severity_counts.columns = ['Severity', 'Count']
-            fig_severity = px.pie(
+            fig_severity = px.bar(
                 severity_counts,
-                names='Severity',
-                values='Count',
-                height=400
+                x='Severity',
+                y='Count',
+                height=400,
+                labels={'Severity': 'Collision Severity', 'Count': 'Number of Collisions'}
             )
+            fig_severity.update_layout(xaxis_tickangle=-45)
             st.plotly_chart(fig_severity, use_container_width=True)
         
-        st.subheader("🚙 Vehicles Involved")
+        st.subheader("Vehicles Involved")
         vehicle_counts = df_filtered['VEHICLES_NBR'].value_counts().sort_index().reset_index()
         vehicle_counts.columns = ['Number of Vehicles', 'Count']
         fig_vehicles = px.bar(
@@ -246,6 +255,92 @@ with tab1:
             height=400
         )
         st.plotly_chart(fig_vehicles, use_container_width=True)
+        
+        # 2026 Forecast Section
+        st.markdown("---")
+        st.subheader("2026 Monthly Collision Forecast (SARIMA)")
+        
+        try:
+            # Load forecast data
+            forecast_df = pd.read_csv('edmonton_collision_forecast_2026.csv', low_memory=False)
+            forecast_df['month'] = pd.to_datetime(forecast_df['month'])
+            
+            # Separate historical and forecast
+            historical_df = forecast_df[forecast_df['model_used'] == 'Actual'].copy()
+            forecast_2026 = forecast_df[forecast_df['month'].dt.year == 2026].copy()
+            
+            if len(forecast_2026) > 0:
+                # Create forecast chart with confidence intervals
+                fig_forecast = go.Figure()
+                
+                # Add historical actual data (no bands)
+                if len(historical_df) > 0:
+                    fig_forecast.add_trace(go.Scatter(
+                        x=historical_df['month'],
+                        y=historical_df['predicted_count'],
+                        mode='lines',
+                        name='Historical Actual',
+                        line=dict(color='#636EFA', width=2)
+                    ))
+                
+                # Add confidence interval as a shaded area for 2026
+                fig_forecast.add_trace(go.Scatter(
+                    x=forecast_2026['month'],
+                    y=forecast_2026['upper_bound'],
+                    fill=None,
+                    mode='lines',
+                    line_color='rgba(0,0,0,0)',
+                    showlegend=False,
+                    name='Upper Bound'
+                ))
+                
+                fig_forecast.add_trace(go.Scatter(
+                    x=forecast_2026['month'],
+                    y=forecast_2026['lower_bound'],
+                    fill='tonexty',
+                    mode='lines',
+                    line_color='rgba(0,0,0,0)',
+                    name='85% Confidence Interval',
+                    fillcolor='rgba(239, 85, 59, 0.2)'
+                ))
+                
+                # Add 2026 point estimates
+                fig_forecast.add_trace(go.Scatter(
+                    x=forecast_2026['month'],
+                    y=forecast_2026['predicted_count'],
+                    mode='lines+markers',
+                    name='2026 Forecast',
+                    line=dict(color='#EF553B', width=3),
+                    marker=dict(size=8)
+                ))
+                
+                fig_forecast.update_layout(
+                    title='2026 Monthly Collision Forecast with 85% Confidence Intervals',
+                    xaxis_title='Month',
+                    yaxis_title='Predicted Number of Collisions',
+                    hovermode='x unified',
+                    height=500,
+                    template='plotly_white'
+                )
+                
+                st.plotly_chart(fig_forecast, use_container_width=True)
+                
+                # Display forecast statistics
+                col_f1, col_f2, col_f3, col_f4 = st.columns(4)
+                with col_f1:
+                    st.metric("Average Forecast", f"{forecast_2026['predicted_count'].mean():.0f}")
+                with col_f2:
+                    st.metric("Lowest Month", f"{forecast_2026['predicted_count'].min():.0f}")
+                with col_f3:
+                    st.metric("Highest Month", f"{forecast_2026['predicted_count'].max():.0f}")
+                with col_f4:
+                    st.metric("Avg. CI Width", f"±{(forecast_2026['upper_bound'].mean() - forecast_2026['predicted_count'].mean()):.0f}")
+            else:
+                st.info("2026 forecast data not available yet.")
+        except FileNotFoundError:
+            st.warning("Forecast file (edmonton_collision_forecast_2026.csv) not found. Run forecast_edmonton_collision.py to generate it.")
+        except Exception as e:
+            st.error(f"Error loading forecast: {str(e)}")
         
         # Data table
         st.markdown("---")
@@ -263,7 +358,7 @@ with tab1:
         # Download button
         csv = df_filtered.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="📥 Download Filtered Data as CSV",
+            label="Download Filtered Data as CSV",
             data=csv,
             file_name=f"filtered_collisions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv",
@@ -273,13 +368,13 @@ with tab1:
 # TAB 2: RISK ANALYSIS
 # ============================================================================
 with tab2:
-    st.header("⚠️ High-Risk Collision Analysis")
+    st.header("High-Risk Collision Analysis")
     st.markdown("**Analyzing collisions with ≥2 vehicles AND (injuries ≥1 OR fatalities ≥1)**")
     st.markdown("**Risk Score Formula**: Vehicles × 1 + Injuries × 5 + Fatalities × 20")
     
     # Risk analysis settings in sidebar
     st.sidebar.markdown("---")
-    st.sidebar.header("🎛️ Risk Analysis Settings")
+    st.sidebar.header("Risk Analysis Settings")
     hex_size = st.sidebar.slider(
         "Hex Grid Size (km)",
         min_value=0.5,
@@ -289,9 +384,15 @@ with tab2:
         key="hex_size"
     )
     
+    # Apply date range filter from Tab 1 to Risk Analysis data
+    df_risk = df[
+        (df['OCCURENCE_DATE'].dt.date >= start_date) &
+        (df['OCCURENCE_DATE'].dt.date <= end_date)
+    ]
+    
     # Prepare risk analysis data
     with st.spinner("Calculating risk scores and aggregating data..."):
-        df_high_risk, hex_agg, temporal_risk = ra.prepare_risk_analysis_data(df, hex_size)
+        df_high_risk, hex_agg, temporal_risk = ra.prepare_risk_analysis_data(df_risk, hex_size)
     
     # Display overview metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -307,7 +408,7 @@ with tab2:
     st.markdown("---")
     
     # Heat Map
-    st.subheader("🔥 Risk Heat Map")
+    st.subheader("Risk Heat Map")
     
     fig_heat = px.density_mapbox(
         df_high_risk,
@@ -329,7 +430,7 @@ with tab2:
     st.markdown("---")
     
     # Risk Choropleth (Hex Grid)
-    st.subheader("🗺️ Risk Zones (Hexagonal Grid)")
+    st.subheader("Risk Zones (Hexagonal Grid)")
     
     # Create hover text
     hex_agg['hover_text'] = (
@@ -367,7 +468,7 @@ with tab2:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📅 Risk Over Time")
+        st.subheader("Risk Over Time")
         fig_temporal = px.line(
             temporal_risk,
             x='month',
@@ -380,7 +481,7 @@ with tab2:
         st.plotly_chart(fig_temporal, use_container_width=True)
     
     with col2:
-        st.subheader("🏙️ Risk by Edmonton Zone")
+        st.subheader("Risk by Edmonton Zone")
         zone_risk = df_high_risk.groupby('edmonton_zone').agg({
             'risk_score': 'sum',
             'CASE_NBR': 'count'
@@ -433,7 +534,7 @@ with tab2:
     # Download risk analysis data
     risk_csv = df_high_risk.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Download High-Risk Collision Data",
+        label="Download High-Risk Collision Data",
         data=risk_csv,
         file_name=f"high_risk_collisions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
         mime="text/csv",

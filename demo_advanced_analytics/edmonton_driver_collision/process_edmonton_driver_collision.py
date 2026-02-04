@@ -1,6 +1,28 @@
 import pandas as pd
 import numpy as np
 
+# Driver Action ID to Description Mapping
+DRIVER_ACTION_MAPPING = {
+    155: 'Driving Properly',
+    156: 'Stop Sign Violation',
+    157: 'Yield Sign Violation',
+    158: 'Fail To Yield ROW Uncontrolled',
+    159: 'Fail To Yield ROW Pedestrian',
+    160: 'Followed Too Closely',
+    161: 'Parked Vehicle',
+    162: 'Backed Unsafely',
+    163: 'Left Turn Across Path',
+    164: 'Improper Lane Change',
+    165: 'Disobey Traffic Signal',
+    166: 'Ran Off Road',
+    167: 'Improper Turn',
+    168: 'Left of Centre',
+    169: 'Improper Passing',
+    -10: 'Blank',
+    170: 'Other/Specify',
+    171: 'Unknown'
+}
+
 print("=" * 80)
 print("Processing Edmonton Driver Collision Data")
 print("=" * 80)

@@ -64,7 +64,7 @@ st.set_page_config(
 )
 
 # Load data
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_data():
     df = pd.read_csv('processed_class_1_driver_collision.csv')
     df['OCCURENCE_DATE'] = pd.to_datetime(df['OCCURENCE_TIMESTRING'])
@@ -79,11 +79,11 @@ def load_data():
 df = load_data()
 
 # Title
-st.title("🚛 Alberta Class 1 Driver Collision Analysis")
+st.title("Alberta Class 1 Driver Collision Analysis")
 st.markdown("**Interactive visualization of collision patterns across Alberta (Apr 2024 - Sep 2025)**")
 
 # Create tabs
-tab1, tab2 = st.tabs(["📊 Overview Dashboard", "⚠️ Risk Analysis"])
+tab1, tab2 = st.tabs(["Overview Dashboard", "Risk Analysis"])
 
 # ============================================================================
 # TAB 1: OVERVIEW DASHBOARD
@@ -92,7 +92,7 @@ with tab1:
     st.header("Overview Dashboard")
     
     # Sidebar filters
-    st.sidebar.header("🔍 Tab 1 Filters")
+    st.sidebar.header("🔍 Filters")
     
     # Date range filter
     min_date = df['OCCURENCE_DATE'].min().date()
@@ -115,9 +115,9 @@ with tab1:
     )
     
     # Driver Action filter
-    driver_action_options = ['All'] + sorted(df['DRIVER_ACTION_ID'].dropna().unique().tolist())
+    driver_action_options = ['All'] + sorted(df['DRIVER_ACTION_DESCRIPTION'].dropna().unique().tolist())
     selected_driver_action = st.sidebar.multiselect(
-        "Driver Action ID",
+        "Driver Action",
         options=driver_action_options,
         default=['All'],
         key="tab1_driver"
@@ -137,16 +137,18 @@ with tab1:
         key="tab1_multi"
     )
     
-    # Apply filters
-    df_filtered = df.copy()
-    
-    # Date filter
+    # Extract date range
     if len(date_range) == 2:
         start_date, end_date = date_range
-        df_filtered = df_filtered[
-            (df_filtered['OCCURENCE_DATE'].dt.date >= start_date) &
-            (df_filtered['OCCURENCE_DATE'].dt.date <= end_date)
-        ]
+    else:
+        start_date = date_range[0]
+        end_date = date_range[0]
+    
+    # Apply filters
+    df_filtered = df[
+        (df['OCCURENCE_DATE'].dt.date >= start_date) &
+        (df['OCCURENCE_DATE'].dt.date <= end_date)
+    ]
     
     # Severity filter
     if 'All' not in selected_severity and len(selected_severity) > 0:
@@ -154,7 +156,7 @@ with tab1:
     
     # Driver action filter
     if 'All' not in selected_driver_action and len(selected_driver_action) > 0:
-        df_filtered = df_filtered[df_filtered['DRIVER_ACTION_ID'].isin(selected_driver_action)]
+        df_filtered = df_filtered[df_filtered['DRIVER_ACTION_DESCRIPTION'].isin(selected_driver_action)]
     
     # Parked vehicle filter
     if parked_vehicle == 'Yes (Y)':
@@ -177,24 +179,26 @@ with tab1:
     
     # Main content
     if len(df_filtered) == 0:
-        st.warning("⚠️ No data matches the selected filters. Please adjust your filter criteria.")
+        st.warning("No data matches the selected filters. Please adjust your filter criteria.")
     else:
         # Map visualization
-        st.subheader("📍 Collision Map")
+        st.subheader("Collision Map")
         
-        # Create color mapping for severity
-        df_filtered['SIZE'] = 5 + (df_filtered['FATALITIES_NBR'] * 10)
-        df_filtered['HOVER_TEXT'] = (
-            "Case: " + df_filtered['CASE_NBR'].astype(str) + "<br>" +
-            "Severity: " + df_filtered['COLLISION_SEVERITY'].astype(str) + "<br>" +
-            "Vehicles: " + df_filtered['VEHICLES_NBR'].astype(str) + "<br>" +
-            "Injured: " + df_filtered['INJURED_NBR'].astype(str) + "<br>" +
-            "Fatalities: " + df_filtered['FATALITIES_NBR'].astype(str) + "<br>" +
-            "Date: " + df_filtered['OCCURENCE_TIMESTRING'].astype(str)
+        # Prepare data for map without creating intermediate columns
+        map_data = df_filtered.assign(
+            SIZE=5 + (df_filtered['FATALITIES_NBR'] * 10),
+            HOVER_TEXT=(
+                "Case: " + df_filtered['CASE_NBR'].astype(str) + "<br>" +
+                "Severity: " + df_filtered['COLLISION_SEVERITY'].astype(str) + "<br>" +
+                "Vehicles: " + df_filtered['VEHICLES_NBR'].astype(str) + "<br>" +
+                "Injured: " + df_filtered['INJURED_NBR'].astype(str) + "<br>" +
+                "Fatalities: " + df_filtered['FATALITIES_NBR'].astype(str) + "<br>" +
+                "Date: " + df_filtered['OCCURENCE_TIMESTRING'].astype(str)
+            )
         )
         
         fig_map = px.scatter_mapbox(
-            df_filtered,
+            map_data,
             lat='LOC_GPS_LAT',
             lon='LOC_GPS_LONG',
             color='COLLISION_SEVERITY',
@@ -223,7 +227,7 @@ with tab1:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("📈 Collisions Over Time")
+            st.subheader("Collisions Over Time")
             time_series = df_filtered.groupby('YEAR_MONTH').size().reset_index(name='Count')
             fig_time = px.bar(
                 time_series,
@@ -236,27 +240,29 @@ with tab1:
             st.plotly_chart(fig_time, use_container_width=True)
         
         with col2:
-            st.subheader("⚠️ Collision Severity Distribution")
+            st.subheader("Collision Severity Distribution")
             severity_counts = df_filtered['COLLISION_SEVERITY'].value_counts().reset_index()
             severity_counts.columns = ['Severity', 'Count']
-            fig_severity = px.pie(
+            fig_severity = px.bar(
                 severity_counts,
-                names='Severity',
-                values='Count',
-                height=400
+                x='Severity',
+                y='Count',
+                height=400,
+                labels={'Severity': 'Collision Severity', 'Count': 'Number of Collisions'}
             )
+            fig_severity.update_layout(xaxis_tickangle=-45)
             st.plotly_chart(fig_severity, use_container_width=True)
         
         col3, col4 = st.columns(2)
         
         with col3:
-            st.subheader("🚗 Top 10 Driver Actions")
-            driver_action_counts = df_filtered['DRIVER_ACTION_ID'].value_counts().head(10).reset_index()
-            driver_action_counts.columns = ['Driver Action ID', 'Count']
+            st.subheader("Top 10 Driver Actions")
+            driver_action_counts = df_filtered['DRIVER_ACTION_DESCRIPTION'].value_counts().head(10).reset_index()
+            driver_action_counts.columns = ['Driver Action', 'Count']
             fig_driver = px.bar(
                 driver_action_counts,
                 x='Count',
-                y='Driver Action ID',
+                y='Driver Action',
                 orientation='h',
                 height=400
             )
@@ -264,7 +270,7 @@ with tab1:
             st.plotly_chart(fig_driver, use_container_width=True)
         
         with col4:
-            st.subheader("🚙 Vehicles Involved")
+            st.subheader("Vehicles Involved")
             vehicle_counts = df_filtered['VEHICLES_NBR'].value_counts().sort_index().reset_index()
             vehicle_counts.columns = ['Number of Vehicles', 'Count']
             fig_vehicles = px.bar(
@@ -280,7 +286,7 @@ with tab1:
         st.subheader("📊 Detailed Data")
         st.dataframe(
             df_filtered[[
-                'CASE_NBR', 'CASE_YEAR', 'COLLISION_SEVERITY', 'DRIVER_ACTION_ID',
+                'CASE_NBR', 'CASE_YEAR', 'COLLISION_SEVERITY', 'DRIVER_ACTION_DESCRIPTION',
                 'FLAG_PARKED_VEHICLE', 'VEHICLES_NBR', 'INJURED_NBR', 'FATALITIES_NBR',
                 'OCCURENCE_TIMESTRING', 'LOC_GPS_LAT', 'LOC_GPS_LONG'
             ]].sort_values('OCCURENCE_TIMESTRING', ascending=False),
@@ -291,7 +297,7 @@ with tab1:
         # Download button
         csv = df_filtered.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="📥 Download Filtered Data as CSV",
+            label="Download Filtered Data as CSV",
             data=csv,
             file_name=f"filtered_collisions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv",
@@ -301,13 +307,13 @@ with tab1:
 # TAB 2: RISK ANALYSIS
 # ============================================================================
 with tab2:
-    st.header("⚠️ High-Risk Collision Analysis")
+    st.header("High-Risk Collision Analysis")
     st.markdown("**Analyzing collisions with ≥2 vehicles AND (injuries ≥1 OR fatalities ≥1)**")
     st.markdown("**Risk Score Formula**: Vehicles × 1 + Injuries × 5 + Fatalities × 20")
     
     # Risk analysis settings in sidebar
     st.sidebar.markdown("---")
-    st.sidebar.header("🎛️ Risk Analysis Settings")
+    st.sidebar.header("Risk Analysis Settings")
     hex_size = st.sidebar.slider(
         "Hex Grid Size (km)",
         min_value=0.5,
@@ -335,7 +341,7 @@ with tab2:
     st.markdown("---")
     
     # Heat Map
-    st.subheader("🔥 Risk Heat Map")
+    st.subheader("Risk Heat Map")
     
     fig_heat = px.density_mapbox(
         df_high_risk,
@@ -357,7 +363,7 @@ with tab2:
     st.markdown("---")
     
     # Risk Choropleth (Hex Grid)
-    st.subheader("🗺️ Risk Zones (Hexagonal Grid)")
+    st.subheader("Risk Zones (Hexagonal Grid)")
     
     # Create hover text
     hex_agg['hover_text'] = (
@@ -395,7 +401,7 @@ with tab2:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📅 Risk Over Time")
+        st.subheader("Risk Over Time")
         fig_temporal = px.line(
             temporal_risk,
             x='month',
@@ -408,7 +414,7 @@ with tab2:
         st.plotly_chart(fig_temporal, use_container_width=True)
     
     with col2:
-        st.subheader("🛣️ Risk by Highway Corridor")
+        st.subheader("Risk by Highway Corridor")
         highway_risk = df_high_risk.groupby('highway_corridor').agg({
             'risk_score': 'sum',
             'CASE_NBR': 'count'
@@ -461,7 +467,7 @@ with tab2:
     # Download risk analysis data
     risk_csv = df_high_risk.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Download High-Risk Collision Data",
+        label="Download High-Risk Collision Data",
         data=risk_csv,
         file_name=f"high_risk_collisions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
         mime="text/csv",

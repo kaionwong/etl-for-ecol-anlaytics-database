@@ -1,6 +1,28 @@
 import pandas as pd
 import numpy as np
 
+# Driver Action ID to Description Mapping
+DRIVER_ACTION_MAPPING = {
+    155: 'Driving Properly',
+    156: 'Stop Sign Violation',
+    157: 'Yield Sign Violation',
+    158: 'Fail To Yield ROW Uncontrolled',
+    159: 'Fail To Yield ROW Pedestrian',
+    160: 'Followed Too Closely',
+    161: 'Parked Vehicle',
+    162: 'Backed Unsafely',
+    163: 'Left Turn Across Path',
+    164: 'Improper Lane Change',
+    165: 'Disobey Traffic Signal',
+    166: 'Ran Off Road',
+    167: 'Improper Turn',
+    168: 'Left of Centre',
+    169: 'Improper Passing',
+    -10: 'Blank',
+    170: 'Other/Specify',
+    171: 'Unknown'
+}
+
 print("=" * 80)
 print("Processing Class 1 Driver Collision Data")
 print("=" * 80)
@@ -39,6 +61,11 @@ print(f"  - Unique CASE_NBR: {df_col_class1['CASE_NBR'].nunique():,}")
 # Aggregate to unique CASE_NBR, keep only CASE_NBR and DRIVER_ACTION_ID
 df_col_class1 = df_col_class1.groupby('CASE_NBR', as_index=False).agg({'DRIVER_ACTION_ID': 'first'})
 print(f"  - Aggregated to {len(df_col_class1):,} unique CASE_NBR rows")
+
+# Map DRIVER_ACTION_ID to description
+df_col_class1['DRIVER_ACTION_DESCRIPTION'] = df_col_class1['DRIVER_ACTION_ID'].map(DRIVER_ACTION_MAPPING)
+# Select only needed columns (avoiding .drop() to improve memory efficiency)
+df_col_class1 = df_col_class1[['CASE_NBR', 'DRIVER_ACTION_DESCRIPTION']]
 
 # Step 4: Merge df_col_class1 and df_col_ab, keeping only rows in df_col_class1
 print("\n[Step 4] Merging df_col_class1 and df_col_ab on CASE_NBR...")
